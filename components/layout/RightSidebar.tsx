@@ -84,7 +84,7 @@ async function FeaturedOdds() {
                     over: ou.over,
                     under: ou.under,
                   } : undefined}
-                  winner={winner}
+                  winner={winner ?? undefined}
                 />
               </li>
             )
