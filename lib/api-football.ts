@@ -242,3 +242,56 @@ export async function fetchLeagueRounds(leagueId: number, season: number): Promi
   const data = await apiFetch<string>('fixtures/rounds', { league: leagueId, season })
   return data.response
 }
+
+// --- Fixture Detail types (events, lineups, statistics) ---
+
+export interface FixtureEvent {
+  time: { elapsed: number; extra: number | null }
+  team: { id: number; name: string; logo: string }
+  player: { id: number; name: string }
+  assist: { id: number | null; name: string | null }
+  type: 'Goal' | 'Card' | 'subst' | 'Var'
+  detail: string
+  comments: string | null
+}
+
+export interface FixtureLineup {
+  team: { id: number; name: string; logo: string; colors: unknown }
+  formation: string
+  startXI: Array<{
+    player: { id: number; name: string; number: number; pos: string; grid: string | null }
+  }>
+  substitutes: Array<{
+    player: { id: number; name: string; number: number; pos: string; grid: string | null }
+  }>
+  coach: { id: number; name: string; photo: string }
+}
+
+export interface FixtureStatistic {
+  team: { id: number; name: string; logo: string }
+  statistics: Array<{ type: string; value: number | string | null }>
+}
+
+export interface FixtureDetail extends Fixture {
+  events: FixtureEvent[]
+  lineups: FixtureLineup[]
+  statistics: FixtureStatistic[]
+}
+
+/** Lấy chi tiết đầy đủ 1 trận (có events, lineups, statistics) */
+export async function fetchFixtureDetails(fixtureId: number): Promise<FixtureDetail | null> {
+  const data = await apiFetch<FixtureDetail>('fixtures', { id: fixtureId })
+  return (data.response[0] as FixtureDetail) ?? null
+}
+
+/** Lấy danh sách giải đấu thực tế của đội trong mùa */
+export async function fetchTeamLeagues(
+  teamId: number,
+  season: number
+): Promise<Array<{ id: number; name: string; logo: string; type: string }>> {
+  const data = await apiFetch<{ league: { id: number; name: string; logo: string; type: string } }>(
+    'leagues',
+    { team: teamId, season }
+  )
+  return data.response.map(r => r.league)
+}

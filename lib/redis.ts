@@ -18,6 +18,9 @@ export const CACHE_KEYS = {
     `team_stats_${teamId}_${leagueId}_${season}`,
   TEAM_FIXTURES: (teamId: number, season: number) =>
     `team_fixtures_${teamId}_${season}`,
+  TEAM_LEAGUES: (teamId: number, season: number) =>
+    `team_leagues_${teamId}_${season}`,
+  FIXTURE_DETAIL_FULL: (fixtureId: number) => `fixture_full_${fixtureId}`,
   LEAGUE: (leagueId: number) => `league_${leagueId}`,
   LEAGUE_FIXTURES: (leagueId: number, season: number, round: string) =>
     `league_fixtures_${leagueId}_${season}_${round}`,
@@ -35,6 +38,8 @@ export const CACHE_TTL = {
   TEAM: 86400 * 7,     // 7 ngày - thông tin đội (ít thay đổi)
   TEAM_STATS: 3600,    // 1 giờ - thống kê đội
   TEAM_FIXTURES: 3600, // 1 giờ - lịch đội
+  TEAM_LEAGUES: 86400, // 1 ngày - giải đấu của đội
+  FIXTURE_DETAIL_FULL: 300, // 5 phút - chi tiết đầy đủ trận (events/lineups/stats)
   LEAGUE: 86400 * 7,   // 7 ngày - thông tin giải (ít thay đổi)
   LEAGUE_FIXTURES: 300,// 5 phút - lịch giải theo vòng
   LEAGUE_ROUNDS: 86400,// 1 ngày - danh sách vòng đấu

@@ -44,9 +44,12 @@
   - [x] Redesign BXH: `StandingsTable` component dùng chung, tô màu zone, form dots
   - [x] Thay emoji bằng logo image từ API-Football
   - [x] Fix season: EU=2025, V.League=2026, V.League ID 197→340
-- [ ] **Đang thực hiện:**
-  - [ ] MatchRow/MatchStatusBadge: hiển thị thêm ngày (không chỉ giờ)
-  - [ ] Trang giải đấu: mặc định hiển thị vòng hiện tại thay vì vòng mới nhất
+- [x] **Đang thực hiện:**
+  - [x] MatchStatusBadge: hiển thị ngày bên dưới giờ khi trận không phải hôm nay, hoặc khi `showDate=true`
+  - [x] `lib/date.ts`: thêm `formatMatchDate()` và `isToday()`
+  - [x] `FixtureList` + `MatchRow`: thêm prop `showDate` truyền xuống badge
+  - [x] Trang giải đấu: `getCurrentRound()` tự tìm vòng đang diễn ra (LIVE → sắp đá 3 ngày → đã kết thúc gần nhất)
+  - [x] Trang đội bóng + giải đấu: truyền `showDate={true}` để luôn hiện ngày
 
 ## 6. Installed Dependencies
 ```json

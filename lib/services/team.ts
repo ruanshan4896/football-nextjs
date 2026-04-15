@@ -4,6 +4,7 @@ import {
   fetchTeamById,
   fetchTeamStatistics,
   fetchTeamFixtures,
+  fetchTeamLeagues,
   type Team,
   type TeamStatistics,
   type Fixture,
@@ -45,4 +46,23 @@ export async function getTeamFixtures(
   const fixtures = await fetchTeamFixtures(teamId, season, 5, 5)
   await redis.set(cacheKey, fixtures, { ex: CACHE_TTL.TEAM_FIXTURES })
   return fixtures
+}
+
+/**
+ * Lấy danh sách giải đấu thực tế của đội trong mùa
+ * Lọc bỏ Friendlies, chỉ giữ League và Cup
+ */
+export async function getTeamLeagues(
+  teamId: number,
+  season: number
+): Promise<Array<{ id: number; name: string; logo: string; type: string }>> {
+  const cacheKey = CACHE_KEYS.TEAM_LEAGUES(teamId, season)
+  const cached = await redis.get<Array<{ id: number; name: string; logo: string; type: string }>>(cacheKey)
+  if (cached) return cached
+
+  const leagues = await fetchTeamLeagues(teamId, season)
+  // Lọc bỏ Friendlies
+  const filtered = leagues.filter(l => !l.name.toLowerCase().includes('friendl'))
+  await redis.set(cacheKey, filtered, { ex: CACHE_TTL.TEAM_LEAGUES })
+  return filtered
 }

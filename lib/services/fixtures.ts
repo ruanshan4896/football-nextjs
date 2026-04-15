@@ -1,6 +1,6 @@
 import 'server-only'
 import { redis, CACHE_KEYS, CACHE_TTL } from '@/lib/redis'
-import { fetchFixturesByDate, fetchFixtureById, type Fixture } from '@/lib/api-football'
+import { fetchFixturesByDate, fetchFixtureById, fetchFixtureDetails, type Fixture, type FixtureDetail } from '@/lib/api-football'
 import { getVNDateString } from '@/lib/date'
 
 /**
@@ -61,4 +61,18 @@ export async function refreshFixturesByDate(date: string): Promise<Fixture[]> {
   const ttl = isToday ? CACHE_TTL.FIXTURES_TODAY : CACHE_TTL.FIXTURES
   await redis.set(CACHE_KEYS.FIXTURES(date), fixtures, { ex: ttl })
   return fixtures
+}
+
+/**
+ * Lấy chi tiết đầy đủ trận đấu (có events, lineups, statistics)
+ * Cache 5 phút
+ */
+export async function getFixtureDetails(fixtureId: number): Promise<FixtureDetail | null> {
+  const cacheKey = CACHE_KEYS.FIXTURE_DETAIL_FULL(fixtureId)
+  const cached = await redis.get<FixtureDetail>(cacheKey)
+  if (cached) return cached
+
+  const fixture = await fetchFixtureDetails(fixtureId)
+  if (fixture) await redis.set(cacheKey, fixture, { ex: CACHE_TTL.FIXTURE_DETAIL_FULL })
+  return fixture
 }
