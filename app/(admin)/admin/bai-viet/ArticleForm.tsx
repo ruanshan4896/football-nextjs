@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, Save, Eye } from 'lucide-react'
 
@@ -37,6 +37,7 @@ function toSlug(str: string): string {
 export default function ArticleForm({ initialData }: Props) {
   const router = useRouter()
   const isEdit = !!initialData?.id
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [form, setForm] = useState<ArticleFormData>({
     title: initialData?.title ?? '',
@@ -51,6 +52,7 @@ export default function ArticleForm({ initialData }: Props) {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPreview, setShowPreview] = useState(false)
 
   function handleTitleChange(title: string) {
     setForm((f) => ({
@@ -59,6 +61,78 @@ export default function ArticleForm({ initialData }: Props) {
       // Chỉ auto-gen slug khi tạo mới (không ghi đè slug đã có khi edit)
       slug: isEdit ? f.slug : toSlug(title),
     }))
+  }
+
+  // Helper functions cho editor
+  function insertTag(tag: string) {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selectedText = form.content.substring(start, end)
+    const beforeText = form.content.substring(0, start)
+    const afterText = form.content.substring(end)
+
+    const newText = selectedText 
+      ? `${beforeText}<${tag}>${selectedText}</${tag}>${afterText}`
+      : `${beforeText}<${tag}></${tag}>${afterText}`
+
+    setForm((f) => ({ ...f, content: newText }))
+
+    // Set cursor position
+    setTimeout(() => {
+      const newPos = selectedText ? end + tag.length * 2 + 5 : start + tag.length + 2
+      textarea.focus()
+      textarea.setSelectionRange(newPos, newPos)
+    }, 0)
+  }
+
+  function insertList(type: 'ul' | 'ol') {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const beforeText = form.content.substring(0, start)
+    const afterText = form.content.substring(start)
+
+    const listHtml = `<${type}>
+  <li>Item 1</li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+</${type}>`
+
+    const newText = `${beforeText}${listHtml}${afterText}`
+    setForm((f) => ({ ...f, content: newText }))
+
+    setTimeout(() => {
+      textarea.focus()
+      textarea.setSelectionRange(start + listHtml.length, start + listHtml.length)
+    }, 0)
+  }
+
+  function insertLink() {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selectedText = form.content.substring(start, end)
+    const beforeText = form.content.substring(0, start)
+    const afterText = form.content.substring(end)
+
+    const url = prompt('Nhập URL:', 'https://')
+    if (!url) return
+
+    const linkText = selectedText || 'link text'
+    const linkHtml = `<a href="${url}" target="_blank" rel="noopener">${linkText}</a>`
+
+    const newText = `${beforeText}${linkHtml}${afterText}`
+    setForm((f) => ({ ...f, content: newText }))
+
+    setTimeout(() => {
+      textarea.focus()
+    }, 0)
   }
 
   async function handleSubmit(status: 'draft' | 'published') {
@@ -211,17 +285,110 @@ export default function ArticleForm({ initialData }: Props) {
 
       {/* Nội dung */}
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">
-          Nội dung (HTML) <span className="text-red-500">*</span>
-        </label>
-        <textarea
-          value={form.content}
-          onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-          rows={16}
-          placeholder="<p>Nội dung bài viết...</p>"
-          className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm font-mono outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 resize-y"
-        />
-        <p className="mt-1 text-xs text-gray-400">Hỗ trợ HTML. Dùng &lt;p&gt;, &lt;h2&gt;, &lt;strong&gt;, &lt;ul&gt;, &lt;li&gt;...</p>
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="block text-sm font-medium text-gray-700">
+            Nội dung (HTML) <span className="text-red-500">*</span>
+          </label>
+          <button
+            type="button"
+            onClick={() => setShowPreview(!showPreview)}
+            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+          >
+            {showPreview ? '✏️ Chỉnh sửa' : '👁️ Xem trước'}
+          </button>
+        </div>
+
+        {!showPreview ? (
+          <>
+            {/* Toolbar */}
+            <div className="flex flex-wrap gap-1 mb-2 p-2 bg-gray-50 border border-gray-200 rounded-t-lg">
+              <button
+                type="button"
+                onClick={() => insertTag('p')}
+                className="px-2 py-1 text-xs font-medium text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                title="Đoạn văn"
+              >
+                P
+              </button>
+              <button
+                type="button"
+                onClick={() => insertTag('h2')}
+                className="px-2 py-1 text-xs font-bold text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                title="Tiêu đề 2"
+              >
+                H2
+              </button>
+              <button
+                type="button"
+                onClick={() => insertTag('h3')}
+                className="px-2 py-1 text-xs font-bold text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                title="Tiêu đề 3"
+              >
+                H3
+              </button>
+              <div className="w-px bg-gray-300 mx-1"></div>
+              <button
+                type="button"
+                onClick={() => insertTag('strong')}
+                className="px-2 py-1 text-xs font-bold text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                title="In đậm"
+              >
+                B
+              </button>
+              <button
+                type="button"
+                onClick={() => insertTag('em')}
+                className="px-2 py-1 text-xs italic text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                title="In nghiêng"
+              >
+                I
+              </button>
+              <div className="w-px bg-gray-300 mx-1"></div>
+              <button
+                type="button"
+                onClick={() => insertList('ul')}
+                className="px-2 py-1 text-xs text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                title="Danh sách"
+              >
+                • List
+              </button>
+              <button
+                type="button"
+                onClick={() => insertList('ol')}
+                className="px-2 py-1 text-xs text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                title="Danh sách số"
+              >
+                1. List
+              </button>
+              <div className="w-px bg-gray-300 mx-1"></div>
+              <button
+                type="button"
+                onClick={() => insertLink()}
+                className="px-2 py-1 text-xs text-gray-600 hover:bg-white hover:text-gray-900 rounded transition-colors"
+                title="Chèn link"
+              >
+                🔗 Link
+              </button>
+            </div>
+
+            <textarea
+              ref={textareaRef}
+              value={form.content}
+              onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
+              rows={16}
+              placeholder="<p>Nội dung bài viết...</p>"
+              className="w-full rounded-b-lg border border-gray-200 border-t-0 px-3 py-2.5 text-sm font-mono outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 resize-y"
+            />
+            <p className="mt-1 text-xs text-gray-400">Hỗ trợ HTML. Dùng &lt;p&gt;, &lt;h2&gt;, &lt;strong&gt;, &lt;ul&gt;, &lt;li&gt;...</p>
+          </>
+        ) : (
+          <div className="rounded-lg border border-gray-200 p-4 bg-white min-h-[400px]">
+            <div 
+              className="prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: form.content }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Error */}
