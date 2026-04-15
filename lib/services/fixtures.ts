@@ -5,16 +5,22 @@ import { getVNDateString } from '@/lib/date'
 
 /**
  * Lấy lịch thi đấu theo ngày.
- * Flow: Redis cache (1 ngày) -> API-Football -> lưu Redis -> trả về
+ * - Ngày hôm nay: cache 5 phút (trận có thể đang diễn ra, status thay đổi liên tục)
+ * - Ngày khác: cache 1 ngày (data ổn định)
  */
 export async function getFixturesByDate(date: string): Promise<Fixture[]> {
   const cacheKey = CACHE_KEYS.FIXTURES(date)
+  const today = getVNDateString(0)
+  const isToday = date === today
 
   const cached = await redis.get<Fixture[]>(cacheKey)
   if (cached) return cached
 
   const fixtures = await fetchFixturesByDate(date)
-  await redis.set(cacheKey, fixtures, { ex: CACHE_TTL.FIXTURES })
+
+  // Ngày hôm nay cache ngắn hơn vì status trận thay đổi liên tục
+  const ttl = isToday ? CACHE_TTL.FIXTURES_TODAY : CACHE_TTL.FIXTURES
+  await redis.set(cacheKey, fixtures, { ex: ttl })
 
   return fixtures
 }
@@ -49,7 +55,10 @@ export async function getFixtureDetail(fixtureId: number): Promise<Fixture | nul
  * Force refresh lịch thi đấu theo ngày (dùng cho cronjob)
  */
 export async function refreshFixturesByDate(date: string): Promise<Fixture[]> {
+  const today = getVNDateString(0)
+  const isToday = date === today
   const fixtures = await fetchFixturesByDate(date)
-  await redis.set(CACHE_KEYS.FIXTURES(date), fixtures, { ex: CACHE_TTL.FIXTURES })
+  const ttl = isToday ? CACHE_TTL.FIXTURES_TODAY : CACHE_TTL.FIXTURES
+  await redis.set(CACHE_KEYS.FIXTURES(date), fixtures, { ex: ttl })
   return fixtures
 }

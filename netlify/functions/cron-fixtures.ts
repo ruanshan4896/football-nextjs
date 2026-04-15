@@ -14,5 +14,5 @@ export default async function handler() {
 }
 
 export const config: Config = {
-  schedule: '1 0 * * *', // mỗi ngày lúc 00:01
+  schedule: '*/5 * * * *', // mỗi 5 phút - cập nhật status trận đang diễn ra trong ngày
 }

@@ -17,8 +17,9 @@ export const CACHE_KEYS = {
 
 // TTL constants (giây)
 export const CACHE_TTL = {
-  LIVE: 60,          // 1 phút - livescore
-  STANDINGS: 3600,   // 1 giờ - bảng xếp hạng
-  FIXTURES: 86400,   // 1 ngày - lịch thi đấu
+  LIVE: 60,            // 1 phút - livescore
+  STANDINGS: 3600,     // 1 giờ - bảng xếp hạng
+  FIXTURES_TODAY: 300, // 5 phút - lịch hôm nay (trận có thể đang diễn ra)
+  FIXTURES: 86400,     // 1 ngày - lịch ngày khác (data ổn định)
   FIXTURE_DETAIL: 300, // 5 phút - chi tiết trận
 } as const
