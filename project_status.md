@@ -20,12 +20,14 @@
 
 ## 4. Database Schema (Draft)
 - **Supabase:** 
-  - `articles`: id, title, slug, content, match_id (nếu là nhận định trận), author, created_at.
+  - `articles`: id, title, slug, content, match_id (nếu là nhận định trận), league_id, author, created_at, status, cover_image, excerpt.
   - `admin_users`: Quản lý tài khoản đăng nhập Admin.
 - **Redis Cache Keys:**
   - `live_matches`: Chứa array các trận đang đá.
   - `standings_{league_id}_{season}`: Cập nhật mỗi giờ.
   - `fixtures_{date}`: Cập nhật mỗi ngày.
+  - `odds_{league_id}_{bookmaker_id}`: Cache tỷ lệ kèo theo giải (7 ngày).
+  - `bookmakers`: Cache danh sách nhà cái (7 ngày).
 
 ## 5. Task Progress
 - [x] **Phase 1-5:** ✅ HOÀN THÀNH
@@ -37,12 +39,23 @@
   - [x] Redesign BXH: StandingsTable, form dots cột riêng desktop
   - [x] `ArticleCard` component dùng chung, filter bài viết theo giải
   - [x] Fix team statistics API (response là object không phải array)
-- [x] **Đang thực hiện:**
-  - [x] Trang `/ty-le-keo`: kèo 1x2, châu Á, tài xỉu 1.5/2.5 từ Bet365, tab chọn giải, màu odds (xanh=cửa trên, đỏ=cửa dưới)
-  - [x] Trang `/tran-dau/[id]`: hiển thị kèo trước trận (ẩn sau khi kết thúc)
-  - [x] `RightSidebar`: tin HOT từ Supabase thật + kèo nổi bật Premier League
-  - [x] `lib/services/odds.ts`: `getOddsByLeague`, `getOddsByFixture`, helpers parse kèo
-  - [x] `lib/api-football.ts`: `fetchOddsByLeague`, `fetchOddsByFixture`, types `FixtureOdds`
+- [x] **Trang Tỷ lệ kèo (Hoàn thành):**
+  - [x] Redesign layout mobile-first: 1 hàng/trận, 3 cột kèo (Chấp 64px, T/X 56px, 1×2 48px)
+  - [x] Format kèo: Chấp (hệ số + odd 2 hàng), T/X (line + odd 2 hàng), 1×2 (3 hàng dọc)
+  - [x] Tính năng chọn bookmaker (mặc định Bet365 ID=8)
+  - [x] Logo đội bóng 16×16px
+  - [x] Toggle hiển thị kèo hiệp 1 + kèo tỷ số (top 3)
+  - [x] Chuẩn hóa font size: text-[11px] cho tất cả số và ký hiệu
+  - [x] Sửa lỗi hydration với formatMatchDate
+  - [x] Components: `BookmakerSelect.tsx`, `OddsMatchRow.tsx`, `OddsCompactRow.tsx`
+- [x] **Navigation & UX:**
+  - [x] Sửa navigation: thay window.location bằng Next.js router
+  - [x] Tạo `BackButton` component với router.back()
+  - [x] Fix button toggle trong Link component
+- [x] **Cập nhật format kèo toàn bộ trang:**
+  - [x] `RightSidebar`: Kèo nổi bật với format bảng (header + 3 cột)
+  - [x] Trang `/tran-dau/[id]`: OddsSection với format bảng đơn giản
+  - [x] `OddsCompactRow`: Format dọc giống bảng tỷ lệ kèo chính
 
 ## 6. Installed Dependencies
 ```json
@@ -75,8 +88,13 @@
 │   ├── nhan-dinh/
 │   │   ├── page.tsx                  # Danh sách bài viết từ Supabase
 │   │   └── [slug]/page.tsx           # Chi tiết bài viết + mini scoreboard
-│   ├── tran-dau/[id]/page.tsx        # Chi tiết trận + bài nhận định
-│   ├── ty-le-keo/page.tsx
+│   ├── tran-dau/[id]/page.tsx        # Chi tiết trận + bài nhận định + kèo
+│   ├── ty-le-keo/
+│   │   ├── page.tsx                  # Bảng tỷ lệ kèo chính
+│   │   ├── BookmakerSelect.tsx       # Dropdown chọn nhà cái
+│   │   └── OddsMatchRow.tsx          # Row hiển thị kèo với toggle
+│   ├── giai-dau/[id]/page.tsx        # BXH + lịch vòng + nhận định
+│   ├── doi-bong/[id]/page.tsx        # Thống kê + lịch thi đấu
 │   └── api/cron/
 │       ├── live/route.ts
 │       ├── fixtures/route.ts
@@ -86,26 +104,40 @@
 │   │   ├── Header.tsx
 │   │   ├── BottomNav.tsx
 │   │   ├── LeftSidebar.tsx
-│   │   └── RightSidebar.tsx
+│   │   └── RightSidebar.tsx          # Tin HOT + Kèo nổi bật
 │   └── ui/
 │       ├── MatchStatusBadge.tsx      # Badge LIVE/giờ/KT/Hoãn
 │       ├── LeagueGroupHeader.tsx     # Header nhóm theo giải
 │       ├── MatchRow.tsx              # 1 hàng trận đấu
-│       └── FixtureList.tsx           # Danh sách trận (dùng chung)
+│       ├── FixtureList.tsx           # Danh sách trận (dùng chung)
+│       ├── ArticleCard.tsx           # Card bài viết (2 variants)
+│       ├── StandingsTable.tsx        # Bảng xếp hạng
+│       ├── BackButton.tsx            # Nút quay lại với router.back()
+│       └── OddsCompactRow.tsx        # Row kèo compact (sidebar, chi tiết)
 ├── lib/
 │   ├── supabase.ts
 │   ├── supabase-server.ts
+│   ├── supabase-browser.ts
 │   ├── redis.ts
-│   ├── api-football.ts
+│   ├── api-football.ts               # Fetch API-Football
+│   ├── date.ts                       # Xử lý timezone VN
+│   ├── json-ld.ts                    # Schema.org structured data
 │   └── services/
 │       ├── live.ts
 │       ├── fixtures.ts
-│       └── standings.ts
+│       ├── standings.ts
+│       ├── league.ts
+│       ├── team.ts
+│       └── odds.ts                   # getOddsByLeague, getOddsByFixture, helpers
 ├── supabase/schema.sql
 └── .env.local
 ```
 
 ## 8. Current Context & Next Step
-- **Current Status:** ✅ Deploy Netlify. Trang giải đấu và đội bóng đã hoàn thiện.
-- **Routes mới:** `/giai-dau/[id]` (BXH + lịch theo vòng), `/doi-bong/[id]` (thống kê + lịch thi đấu).
-- **Next Step:** Tiếp tục hoàn thiện theo yêu cầu.
+- **Current Status:** ✅ Deploy Netlify. Trang tỷ lệ kèo đã hoàn thiện với format mobile-first.
+- **Latest Updates:** 
+  - Redesign trang tỷ lệ kèo với layout 1 hàng/trận
+  - Thêm tính năng chọn bookmaker
+  - Cập nhật format hiển thị kèo toàn bộ trang (sidebar, chi tiết trận)
+  - Sửa navigation issues (router.back(), window.location)
+- **Next Step:** Thêm nội dung bài viết cho các trang (giải đấu, đội bóng, tỷ lệ kèo).
