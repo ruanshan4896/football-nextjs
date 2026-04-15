@@ -15,9 +15,6 @@ interface ArticleFormData {
   league_id: string
   author: string
   status: 'draft' | 'published'
-  content_type: 'match_preview' | 'league_intro' | 'team_intro' | 'odds_guide' | 'standings_guide' | 'fixtures_intro' | 'general'
-  entity_type: 'match' | 'league' | 'team' | 'page' | ''
-  entity_id: string
 }
 
 interface Props {
@@ -51,9 +48,6 @@ export default function ArticleForm({ initialData }: Props) {
     league_id: initialData?.league_id ? String(initialData.league_id) : '',
     author: initialData?.author ?? 'Admin',
     status: initialData?.status ?? 'draft',
-    content_type: (initialData as any)?.content_type ?? 'match_preview',
-    entity_type: (initialData as any)?.entity_type ?? '',
-    entity_id: (initialData as any)?.entity_id ? String((initialData as any).entity_id) : '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -81,8 +75,6 @@ export default function ArticleForm({ initialData }: Props) {
       status,
       match_id: form.match_id ? parseInt(form.match_id) : null,
       league_id: form.league_id ? parseInt(form.league_id) : null,
-      entity_id: form.entity_id ? parseInt(form.entity_id) : null,
-      entity_type: form.entity_type || null,
       published_at: status === 'published' ? new Date().toISOString() : null,
     }
 
@@ -108,59 +100,15 @@ export default function ArticleForm({ initialData }: Props) {
 
   return (
     <div className="space-y-5">
-      {/* Loại nội dung */}
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">
-          Loại nội dung <span className="text-red-500">*</span>
-        </label>
-        <select
-          value={form.content_type}
-          onChange={(e) => setForm({ ...form, content_type: e.target.value as any })}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
-        >
-          <option value="match_preview">Nhận định trận đấu</option>
-          <option value="league_intro">Giới thiệu giải đấu</option>
-          <option value="team_intro">Giới thiệu đội bóng</option>
-          <option value="odds_guide">Hướng dẫn tỷ lệ kèo</option>
-          <option value="standings_guide">Hướng dẫn bảng xếp hạng</option>
-          <option value="fixtures_intro">Giới thiệu lịch thi đấu</option>
-          <option value="general">Bài viết chung</option>
-        </select>
-      </div>
-
-      {/* Entity Type & ID */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Loại entity
-          </label>
-          <select
-            value={form.entity_type}
-            onChange={(e) => setForm({ ...form, entity_type: e.target.value as any })}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
-          >
-            <option value="">-- Không --</option>
-            <option value="match">Trận đấu</option>
-            <option value="league">Giải đấu</option>
-            <option value="team">Đội bóng</option>
-            <option value="page">Trang tĩnh</option>
-          </select>
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-gray-700">
-            Entity ID
-          </label>
-          <input
-            type="number"
-            value={form.entity_id}
-            onChange={(e) => setForm({ ...form, entity_id: e.target.value })}
-            placeholder="39, 33, 1035066..."
-            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
-          />
-          <p className="mt-1 text-xs text-gray-400">
-            ID giải đấu, đội bóng, hoặc trận đấu từ API-Football
-          </p>
-        </div>
+      {/* Hướng dẫn sử dụng */}
+      <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
+        <p className="text-xs text-blue-800 font-medium mb-2">💡 Quy ước tạo nội dung:</p>
+        <ul className="text-xs text-blue-700 space-y-1 list-disc list-inside">
+          <li><strong>Giới thiệu giải đấu:</strong> League ID = 39 (Premier League), Match ID = để trống</li>
+          <li><strong>Giới thiệu đội bóng:</strong> Match ID = 33 (Man Utd), League ID = -1</li>
+          <li><strong>Hướng dẫn tỷ lệ kèo:</strong> League ID = 0, Match ID = để trống, Slug chứa "huong-dan-ty-le-keo"</li>
+          <li><strong>Nhận định trận:</strong> Match ID = ID trận, League ID = ID giải</li>
+        </ul>
       </div>
 
       {/* Tiêu đề */}
