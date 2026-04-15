@@ -6,7 +6,12 @@
 ALTER TABLE articles 
 ADD COLUMN IF NOT EXISTS page_type VARCHAR(30) NULL;
 
--- Step 2: Update existing page_content records based on slug patterns
+-- Step 2: Ensure all 'article' type records have NULL page_type
+UPDATE articles 
+SET page_type = NULL
+WHERE content_type = 'article';
+
+-- Step 3: Update existing page_content records based on slug patterns
 UPDATE articles 
 SET page_type = CASE 
   WHEN slug LIKE 'gioi-thieu-%' AND league_id > 0 THEN 'league_intro'
@@ -19,12 +24,19 @@ SET page_type = CASE
 END
 WHERE content_type = 'page_content';
 
--- Step 3: Set default 'general' for any remaining page_content without page_type
+-- Step 4: Set default 'general' for any remaining page_content without page_type
 UPDATE articles 
 SET page_type = 'general'
 WHERE content_type = 'page_content' AND page_type IS NULL;
 
--- Step 4: Add check constraint for page_type
+-- Step 5: Verify data before adding constraint
+-- Run this to check if there are any violations:
+-- SELECT id, title, content_type, page_type 
+-- FROM articles 
+-- WHERE (content_type = 'article' AND page_type IS NOT NULL) 
+--    OR (content_type = 'page_content' AND page_type IS NULL);
+
+-- Step 6: Add check constraint for page_type
 ALTER TABLE articles 
 DROP CONSTRAINT IF EXISTS articles_page_type_check;
 
@@ -35,7 +47,7 @@ CHECK (
   (content_type = 'page_content' AND page_type IN ('league_intro', 'team_intro', 'odds_guide', 'standings_guide', 'fixtures_guide', 'general'))
 );
 
--- Step 5: Create index for better query performance
+-- Step 7: Create index for better query performance
 CREATE INDEX IF NOT EXISTS idx_articles_page_type ON articles(page_type) WHERE page_type IS NOT NULL;
 
 -- Verify the migration
