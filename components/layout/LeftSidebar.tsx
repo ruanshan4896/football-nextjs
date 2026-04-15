@@ -10,7 +10,7 @@ const POPULAR_LEAGUES = [
   { id: 61,  name: 'Ligue 1',          country: 'France',   logo: 'https://media.api-sports.io/football/leagues/61.png' },
   { id: 2,   name: 'Champions League', country: 'Europe',   logo: 'https://media.api-sports.io/football/leagues/2.png' },
   { id: 3,   name: 'Europa League',    country: 'Europe',   logo: 'https://media.api-sports.io/football/leagues/3.png' },
-  { id: 197, name: 'V.League 1',       country: 'Vietnam',  logo: 'https://media.api-sports.io/football/leagues/197.png' },
+  { id: 340, name: 'V.League 1',       country: 'Vietnam',  logo: 'https://media.api-sports.io/football/leagues/340.png' },
 ]
 
 const INTERNATIONAL_LEAGUES = [

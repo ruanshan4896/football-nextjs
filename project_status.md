@@ -35,9 +35,10 @@
   - [x] Trang `/giai-dau/[id]`: BXH + lịch theo vòng
   - [x] Trang `/doi-bong/[id]`: thống kê + lịch thi đấu
   - [x] Deploy Netlify, 3 Scheduled Functions hoạt động
-- [ ] **Đang thực hiện:**
-  - [ ] Đồng bộ icon hệ thống (chuyển sang Phosphor Icons hoặc Heroicons)
-  - [ ] Redesign bảng xếp hạng: bỏ đường kẻ, tô màu tên đội theo hạng
+- [x] **Đang thực hiện:**
+  - [x] Redesign bảng xếp hạng: component `StandingsTable` dùng chung, bỏ đường kẻ, tô màu tên đội + số thứ hạng theo zone (Champions/Europa/Conference/Relegation), form dots 5 trận gần nhất
+  - [x] Thay toàn bộ emoji flag bằng logo image từ API-Football (đồng bộ trên mọi thiết bị)
+  - [x] `LeftSidebar` dùng logo giải đấu thay vì emoji
 
 ## 6. Installed Dependencies
 ```json

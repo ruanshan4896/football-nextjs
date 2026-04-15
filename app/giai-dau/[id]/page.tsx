@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { BarChart2, Calendar, ChevronLeft, ChevronRight, Globe } from 'lucide-react'
 import { getLeagueById, getLeagueRounds, getLeagueFixturesByRound } from '@/lib/services/league'
-import { getStandings, CURRENT_SEASON } from '@/lib/services/standings'
+import { getStandings, CURRENT_SEASON, TRACKED_LEAGUES } from '@/lib/services/standings'
 import FixtureList from '@/components/ui/FixtureList'
 import StandingsTable from '@/components/ui/StandingsTable'
 
@@ -30,15 +30,15 @@ function Skeleton() {
   )
 }
 
-// BXH section
+// BXH section — không truyền season, để service tự resolve đúng theo từng giải
 async function StandingsSection({ leagueId }: { leagueId: number }) {
-  const standings = await getStandings(leagueId, CURRENT_SEASON)
+  const standings = await getStandings(leagueId)
   return <StandingsTable standings={standings} leagueId={leagueId} />
 }
 
 // Lịch thi đấu theo vòng
-async function FixturesSection({ leagueId, round }: { leagueId: number; round: string }) {
-  const fixtures = await getLeagueFixturesByRound(leagueId, CURRENT_SEASON, round)
+async function FixturesSection({ leagueId, season, round }: { leagueId: number; season: number; round: string }) {
+  const fixtures = await getLeagueFixturesByRound(leagueId, season, round)
   return <FixtureList fixtures={fixtures} emptyMessage="Không có trận đấu nào trong vòng này" />
 }
 
@@ -49,12 +49,15 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
 
   const [league, rounds] = await Promise.all([
     getLeagueById(leagueId),
-    getLeagueRounds(leagueId, CURRENT_SEASON),
+    getLeagueRounds(leagueId, TRACKED_LEAGUES.find(l => l.id === leagueId)?.season ?? CURRENT_SEASON),
   ])
 
   if (!league) notFound()
 
   const activeTab = tab === 'lich' ? 'lich' : 'bxh'
+
+  // Resolve đúng season cho từng giải (V.League = 2026, châu Âu = 2025)
+  const leagueSeason = TRACKED_LEAGUES.find(l => l.id === leagueId)?.season ?? CURRENT_SEASON
 
   // Vòng đấu hiện tại: dùng param hoặc vòng cuối cùng trong danh sách
   const currentRound = typeof roundParam === 'string' ? roundParam : (rounds[rounds.length - 1] ?? '')
@@ -77,7 +80,7 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
             <h1 className="text-base font-bold text-white">{league.league.name}</h1>
             <p className="text-xs text-gray-400 flex items-center gap-1">
               <Globe size={11} />
-              {league.country.name} · Mùa {CURRENT_SEASON}
+              {league.country.name} · Mùa {leagueSeason}
             </p>
           </div>
         </div>
@@ -134,7 +137,7 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
               </div>
             )}
             <Suspense fallback={<Skeleton />}>
-              <FixturesSection leagueId={leagueId} round={currentRound} />
+              <FixturesSection leagueId={leagueId} season={leagueSeason} round={currentRound} />
             </Suspense>
           </>
         )}

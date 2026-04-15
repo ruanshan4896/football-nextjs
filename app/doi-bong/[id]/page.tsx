@@ -43,9 +43,10 @@ function FormBadge({ result }: { result: string }) {
   )
 }
 
-// Thống kê đội
+// Thống kê đội — resolve season đúng theo giải
 async function StatsSection({ teamId, leagueId }: { teamId: number; leagueId: number }) {
-  const stats = await getTeamStatistics(teamId, leagueId, CURRENT_SEASON)
+  const season = TRACKED_LEAGUES.find(l => l.id === leagueId)?.season ?? CURRENT_SEASON
+  const stats = await getTeamStatistics(teamId, leagueId, season)
   if (!stats) {
     return <p className="px-4 py-6 text-center text-sm text-gray-400">Chưa có dữ liệu thống kê</p>
   }
@@ -120,9 +121,10 @@ async function StatsSection({ teamId, leagueId }: { teamId: number; leagueId: nu
   )
 }
 
-// Lịch thi đấu
-async function FixturesSection({ teamId }: { teamId: number }) {
-  const { last, next } = await getTeamFixtures(teamId, CURRENT_SEASON)
+// Lịch thi đấu — resolve season đúng theo đội
+async function FixturesSection({ teamId, leagueId }: { teamId: number; leagueId: number }) {
+  const season = TRACKED_LEAGUES.find(l => l.id === leagueId)?.season ?? CURRENT_SEASON
+  const { last, next } = await getTeamFixtures(teamId, season)
 
   return (
     <div className="space-y-4 p-4">
@@ -252,7 +254,7 @@ export default async function DoiBongPage(props: PageProps<'/doi-bong/[id]'>) {
           </Suspense>
         ) : (
           <Suspense fallback={<Skeleton />}>
-            <FixturesSection teamId={teamId} />
+            <FixturesSection teamId={teamId} leagueId={leagueId} />
           </Suspense>
         )}
       </div>
