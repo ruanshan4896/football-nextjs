@@ -102,13 +102,16 @@ export default function ArticleForm({ initialData }: Props) {
     <div className="space-y-5">
       {/* Hướng dẫn sử dụng */}
       <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
-        <p className="text-xs text-blue-800 font-medium mb-2">💡 Quy ước tạo nội dung:</p>
+        <p className="text-xs text-blue-800 font-medium mb-2">💡 Quy ước tạo nội dung trang:</p>
         <ul className="text-xs text-blue-700 space-y-1 list-disc list-inside">
-          <li><strong>Giới thiệu giải đấu:</strong> League ID = 39 (Premier League), Match ID = để trống</li>
-          <li><strong>Giới thiệu đội bóng:</strong> Match ID = 33 (Man Utd), League ID = -1</li>
-          <li><strong>Hướng dẫn tỷ lệ kèo:</strong> League ID = 0, Match ID = để trống, Slug chứa "huong-dan-ty-le-keo"</li>
-          <li><strong>Nhận định trận:</strong> Match ID = ID trận, League ID = ID giải</li>
+          <li><strong>Giới thiệu giải đấu:</strong> League ID = 39, Match ID = trống, Slug = "gioi-thieu-premier-league"</li>
+          <li><strong>Giới thiệu đội bóng:</strong> Match ID = 33, League ID = -1, Slug = "gioi-thieu-man-utd" hoặc "lich-su-man-utd"</li>
+          <li><strong>Hướng dẫn tỷ lệ kèo:</strong> League ID = 0, Match ID = trống, Slug = "huong-dan-ty-le-keo"</li>
+          <li><strong>Nhận định trận:</strong> Match ID = ID trận, League ID = ID giải, Slug = "nhan-dinh-..."</li>
         </ul>
+        <p className="text-xs text-blue-600 mt-2">
+          ⚠️ <strong>Quan trọng:</strong> Slug phải bắt đầu đúng prefix để hệ thống phân biệt loại nội dung!
+        </p>
       </div>
 
       {/* Tiêu đề */}
