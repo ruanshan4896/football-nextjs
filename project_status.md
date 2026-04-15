@@ -56,6 +56,24 @@
   - [x] `RightSidebar`: Kèo nổi bật với format bảng (header + 3 cột)
   - [x] Trang `/tran-dau/[id]`: OddsSection với format bảng đơn giản
   - [x] `OddsCompactRow`: Format dọc giống bảng tỷ lệ kèo chính
+- [x] **Hệ thống quản lý nội dung (CMS):**
+  - [x] Sử dụng bảng `articles` hiện có (không cần migration)
+  - [x] Quy ước slug prefix để phân biệt loại nội dung:
+    - Giới thiệu giải: `gioi-thieu-*` (league_id=39, match_id=NULL)
+    - Giới thiệu đội: `gioi-thieu-*` hoặc `lich-su-*` (match_id=33, league_id=-1)
+    - Hướng dẫn kèo: `huong-dan-ty-le-keo*` (league_id=0, match_id=NULL)
+    - Nhận định trận: `nhan-dinh-*` (match_id=ID, league_id=ID)
+  - [x] Service layer: `lib/services/content.ts` với getLeagueContent, getTeamContent, getPageContent
+  - [x] Component: `PageContent.tsx` để render nội dung
+  - [x] Tích hợp vào 3 trang: `/giai-dau/[id]`, `/doi-bong/[id]`, `/ty-le-keo`
+  - [x] Admin Form: Thêm hướng dẫn sử dụng quy ước
+- [x] **Admin Editor Improvements:**
+  - [x] Toolbar với buttons: P, H2, H3, B, I, List (ul/ol), Link
+  - [x] Helper functions: insertTag(), insertList(), insertLink()
+  - [x] Preview mode toggle (edit/preview)
+  - [x] Auto-focus và cursor positioning
+  - [x] Delete button: Cải thiện visibility với màu đỏ, border, icon size 16px
+  - [x] UX: Confirm dialog, success/error alerts, loading state
 
 ## 6. Installed Dependencies
 ```json
@@ -140,4 +158,6 @@
   - Thêm tính năng chọn bookmaker
   - Cập nhật format hiển thị kèo toàn bộ trang (sidebar, chi tiết trận)
   - Sửa navigation issues (router.back(), window.location)
-- **Next Step:** Thêm nội dung bài viết cho các trang (giải đấu, đội bóng, tỷ lệ kèo).
+  - Triển khai hệ thống quản lý nội dung cho các trang (giải đấu, đội bóng, tỷ lệ kèo)
+  - Cải thiện Admin Editor: toolbar, preview mode, delete button visibility
+- **Next Step:** Tiếp tục phát triển tính năng theo yêu cầu người dùng.

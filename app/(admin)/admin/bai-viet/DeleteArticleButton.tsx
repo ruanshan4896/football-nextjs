@@ -9,26 +9,38 @@ export default function DeleteArticleButton({ id, title }: { id: string; title: 
   const [loading, setLoading] = useState(false)
 
   async function handleDelete() {
-    if (!confirm(`Xóa bài viết "${title}"?\nHành động này không thể hoàn tác.`)) return
+    if (!confirm(`⚠️ Xóa bài viết "${title}"?\n\nHành động này không thể hoàn tác!`)) return
 
     setLoading(true)
     const res = await fetch(`/api/admin/articles/${id}`, { method: 'DELETE' })
 
     if (res.ok) {
+      alert('✅ Đã xóa bài viết thành công!')
       router.refresh()
     } else {
-      alert('Xóa thất bại, thử lại sau.')
+      alert('❌ Xóa thất bại, thử lại sau.')
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-50"
+      className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 border border-red-200 hover:border-red-300 transition-colors disabled:opacity-50"
+      title="Xóa bài viết"
     >
-      {loading ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+      {loading ? (
+        <>
+          <Loader2 size={14} className="animate-spin" />
+          <span>Đang xóa...</span>
+        </>
+      ) : (
+        <>
+          <Trash2 size={14} />
+          <span>Xóa</span>
+        </>
+      )}
     </button>
   )
 }

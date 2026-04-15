@@ -36,7 +36,7 @@ export default async function BaiVietPage() {
                 <th className="px-4 py-3 font-medium w-24">Trạng thái</th>
                 <th className="px-4 py-3 font-medium w-24">Match ID</th>
                 <th className="px-4 py-3 font-medium w-28">Ngày tạo</th>
-                <th className="px-4 py-3 font-medium w-20">Thao tác</th>
+                <th className="px-4 py-3 font-medium w-32">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -69,12 +69,13 @@ export default async function BaiVietPage() {
                     {formatAdminDate(a.created_at)}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Link
                         href={`/admin/bai-viet/${a.id}`}
                         className="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                        title="Chỉnh sửa"
                       >
-                        <Pencil size={14} />
+                        <Pencil size={16} />
                       </Link>
                       <DeleteArticleButton id={a.id} title={a.title} />
                     </div>
@@ -105,8 +106,12 @@ export default async function BaiVietPage() {
                   )}
                 </div>
               </div>
-              <Link href={`/admin/bai-viet/${a.id}`} className="rounded-lg p-2 text-gray-400 hover:bg-blue-50 hover:text-blue-600">
-                <Pencil size={15} />
+              <Link 
+                href={`/admin/bai-viet/${a.id}`} 
+                className="rounded-lg p-2 text-gray-400 hover:bg-blue-50 hover:text-blue-600"
+                title="Chỉnh sửa"
+              >
+                <Pencil size={16} />
               </Link>
               <DeleteArticleButton id={a.id} title={a.title} />
             </li>
