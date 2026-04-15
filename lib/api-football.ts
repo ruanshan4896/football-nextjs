@@ -193,12 +193,16 @@ export async function fetchTeamStatistics(
   leagueId: number,
   season: number
 ): Promise<TeamStatistics | null> {
+  // teams/statistics trả về response là object trực tiếp, không phải array
   const data = await apiFetch<TeamStatistics>('teams/statistics', {
     team: teamId,
     league: leagueId,
     season,
   })
-  return data.response[0] ?? null
+  // Cast về unknown trước để tránh TypeScript nhầm array vs object
+  const response = data.response as unknown
+  if (!response || (Array.isArray(response) && response.length === 0)) return null
+  return Array.isArray(response) ? response[0] : (response as TeamStatistics)
 }
 
 /** Lấy lịch thi đấu của đội bóng (10 trận gần nhất + 5 trận tới) */

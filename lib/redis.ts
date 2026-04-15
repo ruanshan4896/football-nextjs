@@ -15,7 +15,7 @@ export const CACHE_KEYS = {
   FIXTURE_DETAIL: (fixtureId: number) => `fixture_${fixtureId}`,
   TEAM: (teamId: number) => `team_${teamId}`,
   TEAM_STATS: (teamId: number, leagueId: number, season: number) =>
-    `team_stats_${teamId}_${leagueId}_${season}`,
+    `team_stats_v2_${teamId}_${leagueId}_${season}`,
   TEAM_FIXTURES: (teamId: number, season: number) =>
     `team_fixtures_${teamId}_${season}`,
   TEAM_LEAGUES: (teamId: number, season: number) =>
