@@ -3,11 +3,13 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { BarChart2, Calendar, ChevronLeft, ChevronRight, Globe } from 'lucide-react'
+import { BarChart2, Calendar, ChevronLeft, ChevronRight, Globe, FileText } from 'lucide-react'
 import { getLeagueById, getLeagueRounds, getLeagueFixturesByRound, getCurrentRound } from '@/lib/services/league'
 import { getStandings, CURRENT_SEASON, TRACKED_LEAGUES } from '@/lib/services/standings'
 import FixtureList from '@/components/ui/FixtureList'
 import StandingsTable from '@/components/ui/StandingsTable'
+import ArticleCard from '@/components/ui/ArticleCard'
+import { supabase } from '@/lib/supabase'
 
 export async function generateMetadata(props: PageProps<'/giai-dau/[id]'>): Promise<Metadata> {
   const { id } = await props.params
@@ -42,6 +44,41 @@ async function FixturesSection({ leagueId, season, round }: { leagueId: number; 
   return <FixtureList fixtures={fixtures} showDate emptyMessage="Không có trận đấu nào trong vòng này" />
 }
 
+// Nhận định theo giải đấu
+async function ArticlesSection({ leagueId }: { leagueId: number }) {
+  const { data: articles } = await supabase
+    .from('articles')
+    .select('id, title, slug, excerpt, cover_image, author, published_at, match_id, league_id')
+    .eq('status', 'published')
+    .eq('league_id', leagueId)
+    .order('published_at', { ascending: false })
+    .limit(10)
+
+  if (!articles || articles.length === 0) {
+    return (
+      <div className="px-4 py-10 text-center text-sm text-gray-400">
+        Chưa có bài nhận định nào cho giải đấu này
+      </div>
+    )
+  }
+
+  return (
+    <div className="divide-y divide-gray-50">
+      {articles.map((article) => (
+        <ArticleCard key={article.id} article={article} variant="compact" />
+      ))}
+      <div className="px-4 py-3">
+        <Link
+          href={`/nhan-dinh?league=${leagueId}`}
+          className="text-xs font-medium text-green-700 hover:underline"
+        >
+          Xem tất cả nhận định →
+        </Link>
+      </div>
+    </div>
+  )
+}
+
 export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
   const { id } = await props.params
   const { tab, round: roundParam } = await props.searchParams ?? {}
@@ -54,7 +91,7 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
 
   if (!league) notFound()
 
-  const activeTab = tab === 'lich' ? 'lich' : 'bxh'
+  const activeTab = tab === 'lich' ? 'lich' : tab === 'nhan-dinh' ? 'nhan-dinh' : 'bxh'
 
   // Resolve đúng season cho từng giải (V.League = 2026, châu Âu = 2025)
   const leagueSeason = TRACKED_LEAGUES.find(l => l.id === leagueId)?.season ?? CURRENT_SEASON
@@ -88,7 +125,7 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
           </div>
         </div>
 
-        {/* Tab BXH / Lịch thi đấu */}
+        {/* Tab BXH / Lịch thi đấu / Nhận định */}
         <div className="flex border-b border-gray-100">
           <Link
             href={`/giai-dau/${id}?tab=bxh`}
@@ -98,8 +135,8 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
                 : 'text-gray-500 hover:text-green-600'
             }`}
           >
-            <BarChart2 size={14} className="inline mr-1.5 -mt-0.5" />
-            Bảng xếp hạng
+            <BarChart2 size={14} className="inline mr-1 -mt-0.5" />
+            BXH
           </Link>
           <Link
             href={`/giai-dau/${id}?tab=lich&round=${encodeURIComponent(currentRound)}`}
@@ -109,17 +146,30 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
                 : 'text-gray-500 hover:text-green-600'
             }`}
           >
-            <Calendar size={14} className="inline mr-1.5 -mt-0.5" />
-            Lịch thi đấu
+            <Calendar size={14} className="inline mr-1 -mt-0.5" />
+            Lịch đấu
+          </Link>
+          <Link
+            href={`/giai-dau/${id}?tab=nhan-dinh`}
+            className={`flex-1 py-2.5 text-center text-sm font-medium transition-colors ${
+              activeTab === 'nhan-dinh'
+                ? 'border-b-2 border-green-700 text-green-700'
+                : 'text-gray-500 hover:text-green-600'
+            }`}
+          >
+            <FileText size={14} className="inline mr-1 -mt-0.5" />
+            Nhận định
           </Link>
         </div>
 
         {/* Nội dung tab */}
-        {activeTab === 'bxh' ? (
+        {activeTab === 'bxh' && (
           <Suspense fallback={<Skeleton />}>
             <StandingsSection leagueId={leagueId} />
           </Suspense>
-        ) : (
+        )}
+
+        {activeTab === 'lich' && (
           <>
             {/* Round navigator */}
             {rounds.length > 0 && (
@@ -143,6 +193,12 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
               <FixturesSection leagueId={leagueId} season={leagueSeason} round={currentRound} />
             </Suspense>
           </>
+        )}
+
+        {activeTab === 'nhan-dinh' && (
+          <Suspense fallback={<Skeleton />}>
+            <ArticlesSection leagueId={leagueId} />
+          </Suspense>
         )}
       </div>
     </div>
