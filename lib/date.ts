@@ -31,14 +31,28 @@ export function formatMatchTime(isoDate: string): string {
 /**
  * Format ngày thi đấu ngắn → "T7 14/06" (giờ VN)
  * Dùng cho: MatchStatusBadge khi trận không phải hôm nay
+ * Custom implementation to avoid hydration mismatch
  */
 export function formatMatchDate(isoDate: string): string {
-  return new Date(isoDate).toLocaleDateString(VN_LOCALE, {
-    weekday: 'short',
+  const date = new Date(isoDate)
+  
+  // Get date parts using Intl API with VN timezone
+  const formatter = new Intl.DateTimeFormat(VN_LOCALE, {
     day: '2-digit',
     month: '2-digit',
+    weekday: 'short',
     timeZone: VN_TIMEZONE,
   })
+  
+  const parts = formatter.formatToParts(date)
+  const day = parts.find(p => p.type === 'day')?.value || ''
+  const month = parts.find(p => p.type === 'month')?.value || ''
+  const weekday = parts.find(p => p.type === 'weekday')?.value || ''
+  
+  // Normalize weekday format to ensure consistency (remove "Thứ " prefix if present)
+  const normalizedWeekday = weekday.replace('Thứ ', 'Th ')
+  
+  return `${normalizedWeekday}, ${day}/${month}`
 }
 
 /**

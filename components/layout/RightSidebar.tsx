@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { Newspaper, TrendingUp } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { getOddsByLeague, getMatchWinner } from '@/lib/services/odds'
+import { getOddsByLeague, getMatchWinner, getAsianHandicap, getOverUnder } from '@/lib/services/odds'
 import { formatArticleDate } from '@/lib/date'
+import OddsCompactRow from '@/components/ui/OddsCompactRow'
 
 // Tin HOT từ Supabase
 async function HotNews() {
@@ -43,37 +44,48 @@ async function HotNews() {
 // Kèo nổi bật — lấy 3 trận Premier League
 async function FeaturedOdds() {
   try {
-    const { odds } = await getOddsByLeague(39) // Premier League
+    const { odds } = await getOddsByLeague(39, undefined, 1, 8) // Premier League, Bet365
     const featured = odds.slice(0, 3)
 
     if (featured.length === 0) {
       return <div className="px-4 py-4 text-xs text-gray-400 text-center">Chưa có kèo</div>
     }
 
+    // Fetch fixture details để lấy tên đội và logo
+    const { fetchFixtureById } = await import('@/lib/api-football')
+    const fixtures = await Promise.all(featured.map(o => fetchFixtureById(o.fixture.id)))
+
     return (
       <>
         <ul className="divide-y divide-gray-50">
-          {featured.map((o) => {
+          {featured.map((o, idx) => {
+            const fixture = fixtures[idx]
+            if (!fixture) return null
+
             const winner = getMatchWinner(o)
-            if (!winner) return null
+            const ah = getAsianHandicap(o)
+            const ou = getOverUnder(o, '2.5')
+
             return (
               <li key={o.fixture.id}>
-                <Link href={`/tran-dau/${o.fixture.id}`} className="block px-4 py-3 hover:bg-blue-50 transition-colors">
-                  <div className="grid grid-cols-3 gap-1 text-center">
-                    <div>
-                      <p className="text-[10px] text-gray-400">1</p>
-                      <p className="text-sm font-bold text-green-700">{winner.home}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-400">X</p>
-                      <p className="text-sm font-semibold text-gray-700">{winner.draw}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-400">2</p>
-                      <p className="text-sm font-semibold text-gray-700">{winner.away}</p>
-                    </div>
-                  </div>
-                </Link>
+                <OddsCompactRow
+                  fixtureId={o.fixture.id}
+                  homeTeam={fixture.teams.home.name}
+                  awayTeam={fixture.teams.away.name}
+                  homeLogo={fixture.teams.home.logo}
+                  awayLogo={fixture.teams.away.logo}
+                  handicap={ah[0] ? {
+                    label: ah[0].home.replace('Home ', ''),
+                    homeOdd: ah[0].homeOdd,
+                    awayOdd: ah[0].awayOdd,
+                  } : undefined}
+                  overUnder={ou ? {
+                    label: '2.5',
+                    over: ou.over,
+                    under: ou.under,
+                  } : undefined}
+                  winner={winner}
+                />
               </li>
             )
           })}

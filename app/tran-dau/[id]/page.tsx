@@ -2,12 +2,13 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Clock, Users, TrendingUp } from 'lucide-react'
+import { Clock, Users, TrendingUp } from 'lucide-react'
 import { getFixtureDetails } from '@/lib/services/fixtures'
 import { getOddsByFixture, getMatchWinner, getOverUnder, getAsianHandicap } from '@/lib/services/odds'
 import { supabase } from '@/lib/supabase'
 import MatchStatusBadge from '@/components/ui/MatchStatusBadge'
 import { fixtureJsonLd } from '@/lib/json-ld'
+import BackButton from '@/components/ui/BackButton'
 import { formatMatchDateTime, formatArticleDate } from '@/lib/date'
 import type { FixtureDetail, FixtureEvent } from '@/lib/api-football'
 
@@ -303,14 +304,15 @@ function LineupsSection({ fixture }: { fixture: FixtureDetail }) {
 
 // --- Tỷ lệ kèo ---
 async function OddsSection({ fixtureId }: { fixtureId: number }) {
-  const odds = await getOddsByFixture(fixtureId)
+  const odds = await getOddsByFixture(fixtureId, 8) // Bet365
   if (!odds) return null
 
   const winner = getMatchWinner(odds)
-  const ou = getOverUnder(odds, '2.5')
+  const ou25 = getOverUnder(odds, '2.5')
+  const ou15 = getOverUnder(odds, '1.5')
   const ah = getAsianHandicap(odds)
 
-  if (!winner && !ou && ah.length === 0) return null
+  if (!winner && !ou25 && ah.length === 0) return null
 
   const colorOdd = (odd: string) => {
     const v = parseFloat(odd)
@@ -332,7 +334,7 @@ async function OddsSection({ fixtureId }: { fixtureId: number }) {
         {/* Kèo 1x2 */}
         {winner && (
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Kèo 1X2</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Kèo 1×2 (Châu Âu)</p>
             <div className="grid grid-cols-3 gap-2">
               {[
                 { label: '1 (Nhà)', odd: winner.home },
@@ -352,17 +354,22 @@ async function OddsSection({ fixtureId }: { fixtureId: number }) {
           {/* Châu Á */}
           {ah.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Kèo châu Á</p>
-              <div className="space-y-1.5">
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Kèo Châu Á (Handicap)</p>
+              <div className="space-y-2">
                 {ah.slice(0, 2).map((row, i) => (
-                  <div key={i} className="grid grid-cols-2 gap-1.5">
-                    <div className="rounded-lg bg-gray-50 px-2 py-2 text-center">
-                      <p className="text-[9px] text-gray-400 truncate">{row.home.replace('Home ', '')}</p>
-                      <p className={`text-sm tabular-nums ${colorOdd(row.homeOdd)}`}>{row.homeOdd}</p>
-                    </div>
-                    <div className="rounded-lg bg-gray-50 px-2 py-2 text-center">
-                      <p className="text-[9px] text-gray-400 truncate">{row.away.replace('Away ', '')}</p>
-                      <p className={`text-sm tabular-nums ${colorOdd(row.awayOdd)}`}>{row.awayOdd}</p>
+                  <div key={i} className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] text-gray-400 mb-2 text-center">
+                      Chấp: {row.home.replace('Home ', '')}
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="text-center">
+                        <p className="text-[9px] text-gray-400 mb-1">Nhà</p>
+                        <p className={`text-sm tabular-nums ${colorOdd(row.homeOdd)}`}>{row.homeOdd}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-[9px] text-gray-400 mb-1">Khách</p>
+                        <p className={`text-sm tabular-nums ${colorOdd(row.awayOdd)}`}>{row.awayOdd}</p>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -371,22 +378,27 @@ async function OddsSection({ fixtureId }: { fixtureId: number }) {
           )}
 
           {/* Tài xỉu */}
-          {ou && (
+          {(ou25 || ou15) && (
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Tài/Xỉu</p>
-              <div className="space-y-1.5">
+              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Kèo Tài/Xỉu (Over/Under)</p>
+              <div className="space-y-2">
                 {[
-                  { line: '2.5', data: ou },
-                  { line: '1.5', data: getOverUnder(odds, '1.5') },
+                  { line: '2.5', data: ou25 },
+                  { line: '1.5', data: ou15 },
                 ].filter(x => x.data).map(({ line, data }) => (
-                  <div key={line} className="grid grid-cols-2 gap-1.5">
-                    <div className="rounded-lg bg-orange-50 px-2 py-2 text-center">
-                      <p className="text-[9px] text-orange-500">Tài {line}</p>
-                      <p className={`text-sm tabular-nums ${colorOdd(data!.over)}`}>{data!.over}</p>
-                    </div>
-                    <div className="rounded-lg bg-blue-50 px-2 py-2 text-center">
-                      <p className="text-[9px] text-blue-500">Xỉu {line}</p>
-                      <p className={`text-sm tabular-nums ${colorOdd(data!.under)}`}>{data!.under}</p>
+                  <div key={line} className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] text-gray-400 mb-2 text-center">
+                      Tổng bàn thắng: {line}
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="text-center">
+                        <p className="text-[9px] text-orange-500 mb-1">Tài (Over)</p>
+                        <p className={`text-sm tabular-nums ${colorOdd(data!.over)}`}>{data!.over}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-[9px] text-blue-500 mb-1">Xỉu (Under)</p>
+                        <p className={`text-sm tabular-nums ${colorOdd(data!.under)}`}>{data!.under}</p>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -476,10 +488,7 @@ export default async function TranDauPage(props: PageProps<'/tran-dau/[id]'>) {
         />
       )}
 
-      <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-green-700 transition-colors">
-        <ArrowLeft size={15} />
-        Quay lại
-      </Link>
+      <BackButton />
 
       <Suspense fallback={<Skeleton />}>
         <MatchContent fixtureId={fixtureId} />

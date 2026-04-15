@@ -318,6 +318,11 @@ export interface OddsBookmaker {
   bets: OddsBet[]
 }
 
+export interface Bookmaker {
+  id: number
+  name: string
+}
+
 export interface FixtureOdds {
   fixture: { id: number; timezone: string; date: string; timestamp: number }
   league: { id: number; name: string; country: string; logo: string; flag: string | null; season: number }
@@ -325,16 +330,23 @@ export interface FixtureOdds {
   bookmakers: OddsBookmaker[]
 }
 
-/** Lấy tỷ lệ kèo theo giải đấu (bookmaker 8 = Bet365) */
+/** Lấy danh sách bookmakers */
+export async function fetchBookmakers(): Promise<Bookmaker[]> {
+  const data = await apiFetch<Bookmaker>('odds/bookmakers')
+  return data.response
+}
+
+/** Lấy tỷ lệ kèo theo giải đấu */
 export async function fetchOddsByLeague(
   leagueId: number,
   season: number,
-  page = 1
+  page = 1,
+  bookmakerId = 8 // Default: Bet365
 ): Promise<{ odds: FixtureOdds[]; totalPages: number }> {
   const data = await apiFetch<FixtureOdds>('odds', {
     league: leagueId,
     season,
-    bookmaker: 8, // Bet365
+    bookmaker: bookmakerId,
     page,
   })
   return {
@@ -344,10 +356,13 @@ export async function fetchOddsByLeague(
 }
 
 /** Lấy tỷ lệ kèo theo fixture ID */
-export async function fetchOddsByFixture(fixtureId: number): Promise<FixtureOdds | null> {
+export async function fetchOddsByFixture(
+  fixtureId: number,
+  bookmakerId = 8 // Default: Bet365
+): Promise<FixtureOdds | null> {
   const data = await apiFetch<FixtureOdds>('odds', {
     fixture: fixtureId,
-    bookmaker: 8,
+    bookmaker: bookmakerId,
   })
   return data.response[0] ?? null
 }

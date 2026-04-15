@@ -3,10 +3,11 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, MapPin, Calendar, TrendingUp, Users } from 'lucide-react'
+import { MapPin, Calendar, TrendingUp, Users } from 'lucide-react'
 import { getTeamById, getTeamStatistics, getTeamFixtures, getTeamLeagues } from '@/lib/services/team'
 import { TRACKED_LEAGUES } from '@/lib/services/standings'
 import FixtureList from '@/components/ui/FixtureList'
+import BackButton from '@/components/ui/BackButton'
 
 export async function generateMetadata(props: PageProps<'/doi-bong/[id]'>): Promise<Metadata> {
   const { id } = await props.params
@@ -259,10 +260,7 @@ export default async function DoiBongPage(props: PageProps<'/doi-bong/[id]'>) {
 
   return (
     <div className="space-y-4">
-      <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-green-700 transition-colors">
-        <ArrowLeft size={15} />
-        Quay lại
-      </Link>
+      <BackButton />
 
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         {/* Header */}

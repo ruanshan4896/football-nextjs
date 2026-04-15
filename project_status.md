@@ -37,8 +37,12 @@
   - [x] Redesign BXH: StandingsTable, form dots cột riêng desktop
   - [x] `ArticleCard` component dùng chung, filter bài viết theo giải
   - [x] Fix team statistics API (response là object không phải array)
-- [ ] **Đang thực hiện:**
-  - [ ] Trang `/ty-le-keo`: tỷ lệ kèo 1x2, châu Á, tài xỉu theo giải đấu
+- [x] **Đang thực hiện:**
+  - [x] Trang `/ty-le-keo`: kèo 1x2, châu Á, tài xỉu 1.5/2.5 từ Bet365, tab chọn giải, màu odds (xanh=cửa trên, đỏ=cửa dưới)
+  - [x] Trang `/tran-dau/[id]`: hiển thị kèo trước trận (ẩn sau khi kết thúc)
+  - [x] `RightSidebar`: tin HOT từ Supabase thật + kèo nổi bật Premier League
+  - [x] `lib/services/odds.ts`: `getOddsByLeague`, `getOddsByFixture`, helpers parse kèo
+  - [x] `lib/api-football.ts`: `fetchOddsByLeague`, `fetchOddsByFixture`, types `FixtureOdds`
 
 ## 6. Installed Dependencies
 ```json

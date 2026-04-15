@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Clock, User } from 'lucide-react'
+import { Clock, User } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { getFixtureDetail } from '@/lib/services/fixtures'
 import MatchStatusBadge from '@/components/ui/MatchStatusBadge'
 import { articleJsonLd } from '@/lib/json-ld'
 import { formatArticleDateTime } from '@/lib/date'
+import BackButton from '@/components/ui/BackButton'
 
 // Dynamic metadata
 export async function generateMetadata(props: PageProps<'/nhan-dinh/[slug]'>): Promise<Metadata> {
@@ -58,13 +59,7 @@ export default async function NhanDinhDetailPage(props: PageProps<'/nhan-dinh/[s
       />
 
       {/* Back */}
-      <Link
-        href="/nhan-dinh"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-green-700 transition-colors"
-      >
-        <ArrowLeft size={15} />
-        Nhận định
-      </Link>
+      <BackButton label="Nhận định" />
 
       <article className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
         {/* Ảnh bìa */}
