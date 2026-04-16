@@ -26,7 +26,7 @@ export async function getBookmakers(): Promise<Bookmaker[]> {
 }
 
 /**
- * Lấy tỷ lệ kèo theo giải đấu
+ * Lấy tỷ lệ kèo theo giải đấu - chỉ các trận sắp diễn ra
  */
 export async function getOddsByLeague(
   leagueId: number,
@@ -35,14 +35,33 @@ export async function getOddsByLeague(
   bookmakerId = 8
 ): Promise<{ odds: FixtureOdds[]; totalPages: number }> {
   const resolvedSeason = season ?? TRACKED_LEAGUES.find(l => l.id === leagueId)?.season ?? CURRENT_SEASON
-  const cacheKey = `${CACHE_KEYS.ODDS_LEAGUE(leagueId, resolvedSeason, page)}_bm${bookmakerId}`
+  const cacheKey = `${CACHE_KEYS.ODDS_LEAGUE(leagueId, resolvedSeason, page)}_bm${bookmakerId}_upcoming`
 
   const cached = await redis.get<{ odds: FixtureOdds[]; totalPages: number }>(cacheKey)
   if (cached) return cached
 
+  // Lấy tất cả odds từ API
   const result = await fetchOddsByLeague(leagueId, resolvedSeason, page, bookmakerId)
-  await redis.set(cacheKey, result, { ex: CACHE_TTL.ODDS })
-  return result
+  
+  // Lấy thông tin fixture để kiểm tra status
+  const { fetchFixtureById } = await import('@/lib/api-football')
+  const fixtureIds = result.odds.map(o => o.fixture.id)
+  const fixtures = await Promise.all(fixtureIds.map(id => fetchFixtureById(id)))
+  
+  // Lọc chỉ những trận sắp diễn ra (NS = Not Started)
+  const upcomingOdds = result.odds.filter((odds, index) => {
+    const fixture = fixtures[index]
+    return fixture && fixture.fixture.status.short === 'NS'
+  })
+
+  const filteredResult = {
+    odds: upcomingOdds,
+    totalPages: result.totalPages
+  }
+
+  // Cache ngắn hơn vì dữ liệu thay đổi thường xuyên
+  await redis.set(cacheKey, filteredResult, { ex: CACHE_TTL.ODDS / 2 })
+  return filteredResult
 }
 
 /**

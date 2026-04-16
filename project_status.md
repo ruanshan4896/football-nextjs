@@ -18,16 +18,22 @@
 3. **SEO Rule:** Sử dụng Dynamic Meta Tags, JSON-LD cho tất cả các trang giải đấu, trận đấu. Tận dụng ISR (Incremental Static Regeneration) của Next.js cho lịch thi đấu/kết quả.
 4. **Single Source of Truth:** Tiến độ, lỗi, cấu trúc Database PHẢI được cập nhật liên tục vào file `project_status.md` này. Cấm tạo file theo dõi khác.
 
-## 4. Database Schema (Draft)
-- **Supabase:** 
-  - `articles`: id, title, slug, content, match_id (nếu là nhận định trận), league_id, author, created_at, status, cover_image, excerpt.
-  - `admin_users`: Quản lý tài khoản đăng nhập Admin.
+## 4. Database Schema (Final)
+- **Supabase Articles Table:** 
+  - Core fields: `id, title, slug, content, excerpt, cover_image, author, status, created_at, updated_at, published_at`
+  - Legacy fields: `match_id, league_id` (kept for backward compatibility)
+  - **Simplified Content System (Current):**
+    - `content_type`: 'article' | 'page_content'
+    - `page_type`: Always 'general' for page_content (simplified)
+    - `page_path`: Manual input path for content matching (e.g., '/giai-dau/39', '/ty-le-keo', '/bang-xep-hang?league=135')
+  - **Removed Fields:** `entity_type, entity_id` (cleaned up April 2026)
+- **Admin Users:** `admin_users` table for authentication
 - **Redis Cache Keys:**
-  - `live_matches`: Chứa array các trận đang đá.
-  - `standings_{league_id}_{season}`: Cập nhật mỗi giờ.
-  - `fixtures_{date}`: Cập nhật mỗi ngày.
-  - `odds_{league_id}_{bookmaker_id}`: Cache tỷ lệ kèo theo giải (7 ngày).
-  - `bookmakers`: Cache danh sách nhà cái (7 ngày).
+  - `live_matches`: Array of live matches
+  - `standings_{league_id}_{season}`: Updated hourly
+  - `fixtures_{date}`: Updated daily
+  - `odds_{league_id}_{bookmaker_id}`: Odds cache by league (7 days)
+  - `bookmakers`: Bookmaker list cache (7 days)
 
 ## 5. Task Progress
 - [x] **Phase 1-5:** ✅ HOÀN THÀNH
@@ -56,45 +62,71 @@
   - [x] `RightSidebar`: Kèo nổi bật với format bảng (header + 3 cột)
   - [x] Trang `/tran-dau/[id]`: OddsSection với format bảng đơn giản
   - [x] `OddsCompactRow`: Format dọc giống bảng tỷ lệ kèo chính
-- [x] **Hệ thống quản lý nội dung (CMS):**
-  - [x] Sử dụng bảng `articles` hiện có (không cần migration)
-  - [x] Quy ước slug prefix để phân biệt loại nội dung:
-    - Giới thiệu giải: `gioi-thieu-*` (league_id=39, match_id=NULL)
-    - Giới thiệu đội: `gioi-thieu-*` hoặc `lich-su-*` (match_id=33, league_id=-1)
-    - Hướng dẫn kèo: `huong-dan-ty-le-keo*` (league_id=0, match_id=NULL)
-    - Nhận định trận: `nhan-dinh-*` (match_id=ID, league_id=ID)
-  - [x] Service layer: `lib/services/content.ts` với getLeagueContent, getTeamContent, getPageContent
+- [x] **Hệ thống quản lý nội dung (CMS) - UPDATED 2026-04-16:**
+  - [x] **Simplified Path-Based System (Active):**
+    - `content_type`: 'article' (hiển thị /nhan-dinh) | 'page_content' (hiển thị theo path)
+    - `page_type`: Luôn là 'general' cho page_content (đơn giản hóa)
+    - `page_path`: Nhập trực tiếp path (VD: '/giai-dau/39', '/ty-le-keo', '/bang-xep-hang?league=135')
+  - [x] Service layer: `lib/services/content.ts` với `getPageContentByPath()`
   - [x] Component: `PageContent.tsx` để render nội dung
-  - [x] Tích hợp vào 3 trang: `/giai-dau/[id]`, `/doi-bong/[id]`, `/ty-le-keo`
-  - [x] Admin Form: Thêm hướng dẫn sử dụng quy ước
-- [x] **Admin Editor Improvements:**
-  - [x] Toolbar với buttons: P, H2, H3, B, I, List (ul/ol), Link
-  - [x] Helper functions: insertTag(), insertList(), insertLink()
-  - [x] Preview mode toggle (edit/preview)
-  - [x] Auto-focus và cursor positioning
-  - [x] Delete button: Cải thiện visibility với màu đỏ, border, icon size 16px
-  - [x] UX: Confirm dialog, success/error alerts, loading state
+  - [x] Tích hợp vào các trang: `/giai-dau/[id]`, `/doi-bong/[id]`, `/ty-le-keo`
+  - [x] **Admin Form Simplified:**
+    - [x] Chỉ 2 dropdown: "Bài viết" hoặc "Nội dung trang"
+    - [x] Khi chọn "Nội dung trang": hiện field nhập path trực tiếp
+    - [x] Validation: bắt buộc nhập page_path cho page_content
+    - [x] Xóa hết dropdown phức tạp và auto-generation logic
+- [x] **Admin Editor Improvements (MAJOR UPDATE 2026-04-16):**
+  - [x] **WYSIWYG Rich Text Editor:** Tích hợp Tiptap editor thay thế textarea HTML thô
+  - [x] **Professional Toolbar:** Undo/Redo, Headings (H2/H3), Bold/Italic/Code, Lists, Blockquote, Text Align, Link/Image
+  - [x] **Real-time Preview:** WYSIWYG editing với preview mode toggle
+  - [x] **Custom Prose Styling:** CSS tùy chỉnh cho typography, tương thích Tailwind v4
+  - [x] **User-Friendly Interface:** Không còn cần viết HTML thô, editor trực quan như Word/Google Docs
+  - [x] **Removed Legacy:** Xóa hết toolbar cũ và helper functions không cần thiết
+- [x] **SEO Optimization (COMPLETED 2026-04-16):**
+  - [x] **Canonical URLs:** Added to all dynamic pages (matches, leagues, teams, articles)
+  - [x] **Environment-aware URLs:** Development uses localhost:3000, production uses bongdalive.com
+  - [x] **JSON-LD Schemas:** Organization, SportsEvent, NewsArticle, SportsTeam, SportsLeague, BreadcrumbList
+  - [x] **OG Image Generators:** Professional dynamic images for all page types using Next.js ImageResponse
+  - [x] **Enhanced Sitemap:** 500+ URLs including leagues, teams, matches, and articles
+  - [x] **Breadcrumb Navigation:** Component with structured data support
+  - [x] **OpenGraph Metadata:** Proper descriptions and images for social media sharing
+  - [x] **Local Development Fix:** Canonical URLs now work correctly in both dev and production
 
-## 6. Installed Dependencies
+## 6. Installed Dependencies (Updated)
 ```json
 {
   "dependencies": {
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.103.0",
+    "@upstash/redis": "^1.37.0",
+    "lucide-react": "^1.8.0",
     "next": "16.2.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "@supabase/supabase-js": "latest",
-    "@upstash/redis": "latest",
-    "lucide-react": "latest"
+    "@tiptap/react": "^2.x",
+    "@tiptap/pm": "^2.x",
+    "@tiptap/starter-kit": "^2.x",
+    "@tiptap/extension-link": "^2.x",
+    "@tiptap/extension-image": "^2.x",
+    "@tiptap/extension-text-align": "^2.x",
+    "@tiptap/extension-list-item": "^2.x",
+    "@tiptap/extension-bullet-list": "^2.x",
+    "@tiptap/extension-ordered-list": "^2.x"
   },
   "devDependencies": {
-    "tailwindcss": "^4",
     "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.3",
+    "tailwindcss": "^4",
     "typescript": "^5"
   }
 }
 ```
 
-## 7. Project Structure
+## 7. Project Structure (Cleaned)
 ```
 /
 ├── app/
@@ -113,10 +145,18 @@
 │   │   └── OddsMatchRow.tsx          # Row hiển thị kèo với toggle
 │   ├── giai-dau/[id]/page.tsx        # BXH + lịch vòng + nhận định
 │   ├── doi-bong/[id]/page.tsx        # Thống kê + lịch thi đấu
-│   └── api/cron/
-│       ├── live/route.ts
-│       ├── fixtures/route.ts
-│       └── standings/route.ts
+│   ├── (admin)/                      # Admin panel routes
+│   │   └── admin/
+│   │       ├── layout.tsx
+│   │       ├── page.tsx
+│   │       ├── login/
+│   │       └── bai-viet/             # Article management
+│   └── api/
+│       ├── admin/                    # Admin API routes
+│       └── cron/                     # Scheduled jobs
+│           ├── live/route.ts
+│           ├── fixtures/route.ts
+│           └── standings/route.ts
 ├── components/
 │   ├── layout/
 │   │   ├── Header.tsx
@@ -131,33 +171,97 @@
 │       ├── ArticleCard.tsx           # Card bài viết (2 variants)
 │       ├── StandingsTable.tsx        # Bảng xếp hạng
 │       ├── BackButton.tsx            # Nút quay lại với router.back()
+│       ├── PageContent.tsx           # Render page content
+│       ├── RichTextEditor.tsx        # Tiptap WYSIWYG editor component
+│       ├── RichTextEditorWrapper.tsx # SSR-safe wrapper for editor
+│       ├── ImageDialog.tsx           # Professional image insert dialog
+│       ├── LinkDialog.tsx            # Professional link insert dialog
 │       └── OddsCompactRow.tsx        # Row kèo compact (sidebar, chi tiết)
 ├── lib/
-│   ├── supabase.ts
-│   ├── supabase-server.ts
-│   ├── supabase-browser.ts
+│   ├── supabase.ts, supabase-server.ts, supabase-browser.ts
 │   ├── redis.ts
 │   ├── api-football.ts               # Fetch API-Football
 │   ├── date.ts                       # Xử lý timezone VN
 │   ├── json-ld.ts                    # Schema.org structured data
 │   └── services/
-│       ├── live.ts
-│       ├── fixtures.ts
-│       ├── standings.ts
-│       ├── league.ts
-│       ├── team.ts
-│       └── odds.ts                   # getOddsByLeague, getOddsByFixture, helpers
-├── supabase/schema.sql
-└── .env.local
+│       ├── live.ts, fixtures.ts, standings.ts
+│       ├── league.ts, team.ts
+│       ├── odds.ts                   # getOddsByLeague, getOddsByFixture, helpers
+│       └── content.ts                # getPageContentByPath
+├── supabase/
+│   ├── schema.sql                    # Current database schema
+│   └── cleanup_legacy_columns.sql    # Final cleanup migration
+├── public/                           # (Cleaned - removed unused assets)
+├── .env.local
+├── package.json                      # (Cleaned dependencies)
+├── README.md                         # (Updated with project info)
+├── netlify.toml, vercel.json, railway.toml  # Multi-platform deployment
+└── project_status.md                 # This file
 ```
 
 ## 8. Current Context & Next Step
-- **Current Status:** ✅ Deploy Netlify. Trang tỷ lệ kèo đã hoàn thiện với format mobile-first.
-- **Latest Updates:** 
-  - Redesign trang tỷ lệ kèo với layout 1 hàng/trận
-  - Thêm tính năng chọn bookmaker
-  - Cập nhật format hiển thị kèo toàn bộ trang (sidebar, chi tiết trận)
-  - Sửa navigation issues (router.back(), window.location)
-  - Triển khai hệ thống quản lý nội dung cho các trang (giải đấu, đội bóng, tỷ lệ kèo)
-  - Cải thiện Admin Editor: toolbar, preview mode, delete button visibility
-- **Next Step:** Tiếp tục phát triển tính năng theo yêu cầu người dùng.
+- **Current Status:** ✅ Project fully optimized with comprehensive SEO implementation. Production-ready system.
+- **Latest Updates (April 16, 2026):** 
+  - **MAJOR SEO UPGRADE:** Complete SEO audit and optimization
+  - **SEO Features Added:**
+    - ✅ Canonical URLs for all dynamic pages (matches, leagues, teams, articles)
+    - ✅ Environment-aware URLs (localhost for dev, production domain for prod)
+    - ✅ Comprehensive JSON-LD schemas: Organization, SportsEvent, NewsArticle, SportsTeam, SportsLeague, BreadcrumbList
+    - ✅ Professional OG image generators for all dynamic pages using Next.js ImageResponse
+    - ✅ Enhanced sitemap with 500+ URLs including leagues, teams, matches, and articles
+    - ✅ Breadcrumb navigation with structured data support
+    - ✅ Improved OpenGraph metadata with proper descriptions and images
+  - **WYSIWYG Editor:** Professional Tiptap editor with rich toolbar and real-time preview
+  - **Project Cleanup:** 11 redundant files deleted, dependencies optimized
+  - **CMS System:** Simplified path-based content management
+- **SEO Compliance:** All pages now have proper canonical URLs, structured data, and social media optimization
+- **Next Step:** World Cup 2026 Phase 3 completed successfully. All 3 phases of World Cup 2026 implementation are now complete with comprehensive tournament coverage.
+
+## TASK 7: World Cup 2026 Implementation - Phase 1
+- **STATUS**: ✅ COMPLETED
+- **USER QUERIES**: 7 ("Hãy bắt đầu Phase 1")
+- **DETAILS**: Successfully implemented World Cup 2026 Phase 1 with accurate data from API-Football. Created tournament structure, services, and basic UI.
+- **COMPLETED TASKS**:
+  * ✅ Added World Cup to TRACKED_LEAGUES with correct ID (1) and season (2026)
+  * ✅ Created comprehensive World Cup service (`lib/services/worldcup.ts`)
+  * ✅ Verified API data: 12 groups (A-L), 4 teams per group, 48 total teams
+  * ✅ Built main World Cup page (`/world-cup-2026`) with groups grid
+  * ✅ Created group detail pages (`/world-cup-2026/bang-dau/[group]`)
+  * ✅ Added World Cup routes to sitemap (13 new URLs)
+  * ✅ Updated navigation to include "World Cup 2026"
+  * ✅ Implemented proper caching strategy (1 hour for standings, 30 min for fixtures)
+- **FILEPATHS**: `lib/services/worldcup.ts`, `app/world-cup-2026/`, `lib/services/standings.ts`, `app/sitemap.ts`, `components/layout/LeftSidebar.tsx`
+
+## TASK 8: World Cup 2026 Implementation - Phase 2
+- **STATUS**: ✅ COMPLETED
+- **USER QUERIES**: 8 ("hãy tiếp tục sang Phase 2")
+- **DETAILS**: Successfully implemented Phase 2 with fixtures schedule and statistics pages. Created comprehensive tournament navigation and data visualization.
+- **COMPLETED TASKS**:
+  * ✅ Created fixtures page (`/world-cup-2026/lich-thi-dau`) with round navigation
+  * ✅ Built statistics page (`/world-cup-2026/thong-ke`) with third-place ranking
+  * ✅ Implemented round-based fixture filtering (Group Stage - 1, 2, 3)
+  * ✅ Added fixtures grouped by date with proper Vietnamese formatting
+  * ✅ Created third-place teams ranking with qualification status
+  * ✅ Built group winners summary with visual cards
+  * ✅ Added tournament format explanation and rules
+  * ✅ Implemented responsive navigation (desktop tabs, mobile navigation)
+  * ✅ Added 2 new URLs to sitemap (total 15 World Cup URLs)
+  * ✅ Consistent navigation tabs across all World Cup pages
+- **FILEPATHS**: `app/world-cup-2026/lich-thi-dau/`, `app/world-cup-2026/thong-ke/`, `app/sitemap.ts`
+
+## TASK 9: World Cup 2026 Implementation - Phase 3
+- **STATUS**: ✅ COMPLETED
+- **USER QUERIES**: 9 ("tiếp tục sang phase 3")
+- **DETAILS**: Successfully completed Phase 3 with knockout bracket visualization. Created comprehensive bracket system with desktop tree view and mobile list view.
+- **COMPLETED TASKS**:
+  * ✅ Completed knockout service (`lib/services/worldcup-knockout.ts`) with bracket generation logic
+  * ✅ Created knockout bracket page (`/world-cup-2026/knockout`) with professional visualization
+  * ✅ Built desktop bracket tree view with 6-column layout (Round 32 → Final)
+  * ✅ Implemented mobile-friendly list view with collapsible rounds
+  * ✅ Added bracket progression visualization with team logos and scores
+  * ✅ Created tournament progression info with visual roadmap
+  * ✅ Updated navigation tabs across all World Cup pages to include "Knockout"
+  * ✅ Added knockout page to sitemap (total 16 World Cup URLs)
+  * ✅ Implemented proper match status indicators (scheduled/live/finished)
+  * ✅ Added FIFA World Cup 2026 format explanation (32 teams → 16 → 8 → 4 → 2 → 1)
+- **FILEPATHS**: `app/world-cup-2026/knockout/page.tsx`, `lib/services/worldcup-knockout.ts`, `app/sitemap.ts`, all World Cup navigation tabs

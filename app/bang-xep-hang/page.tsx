@@ -7,9 +7,18 @@ import StandingsTable from '@/components/ui/StandingsTable'
 import PageContentSection from '@/components/ui/PageContent'
 import { getPageContent, getCurrentPageContent } from '@/lib/services/content'
 
-export const metadata: Metadata = {
-  title: 'Bảng xếp hạng bóng đá',
-  description: 'Bảng xếp hạng các giải đấu bóng đá hàng đầu thế giới cập nhật mới nhất.',
+export async function generateMetadata(props: PageProps<'/bang-xep-hang'>): Promise<Metadata> {
+  const searchParams = await props.searchParams ?? {}
+  
+  // Lấy nội dung trang - ưu tiên content có query params, fallback về trang chính
+  const pageContentWithParams = await getCurrentPageContent('/bang-xep-hang', searchParams)
+  const pageContentDefault = pageContentWithParams ? null : await getPageContent('standings')
+  const pageContent = pageContentWithParams || pageContentDefault
+  
+  return {
+    title: pageContent?.title || 'Bảng xếp hạng bóng đá',
+    description: pageContent?.excerpt || 'Bảng xếp hạng các giải đấu bóng đá hàng đầu thế giới cập nhật mới nhất.',
+  }
 }
 
 function Skeleton() {
@@ -48,9 +57,6 @@ export default async function BangXepHangPage(props: PageProps<'/bang-xep-hang'>
 
   return (
     <div className="space-y-3">
-      {/* Nội dung trang (nếu có) */}
-      {pageContent && <PageContentSection content={pageContent} />}
-      
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         {/* Header */}
         <div className="flex items-center gap-2 bg-green-700 px-4 py-3">
@@ -83,6 +89,9 @@ export default async function BangXepHangPage(props: PageProps<'/bang-xep-hang'>
           <StandingsSection leagueId={selectedLeague.id} />
         </Suspense>
       </div>
+
+      {/* Nội dung trang (nếu có) - di chuyển xuống cuối */}
+      {pageContent && <PageContentSection content={pageContent} />}
     </div>
   )
 }

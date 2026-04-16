@@ -48,6 +48,9 @@ export default async function EditArticlePage(props: PageProps<'/admin/bai-viet/
             league_id: article.league_id ? String(article.league_id) : '',
             author: article.author,
             status: article.status,
+            content_type: article.content_type as 'article' | 'page_content',
+            page_type: article.page_type as 'league_intro' | 'team_intro' | 'odds_guide' | 'standings_guide' | 'fixtures_guide' | 'general' | '',
+            page_path: article.page_path ?? '',
           }}
         />
       </div>

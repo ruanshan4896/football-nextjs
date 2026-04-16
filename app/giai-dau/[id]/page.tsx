@@ -12,14 +12,34 @@ import ArticleCard from '@/components/ui/ArticleCard'
 import PageContentSection from '@/components/ui/PageContent'
 import { supabase } from '@/lib/supabase'
 import { getLeagueContent } from '@/lib/services/content'
+import { leagueJsonLd, breadcrumbJsonLd } from '@/lib/json-ld'
+import Breadcrumb from '@/components/ui/Breadcrumb'
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com'
 
 export async function generateMetadata(props: PageProps<'/giai-dau/[id]'>): Promise<Metadata> {
   const { id } = await props.params
   const league = await getLeagueById(parseInt(id))
   if (!league) return { title: 'Giải đấu không tồn tại' }
+  
+  // Lấy nội dung CMS cho giải đấu
+  const leagueContent = await getLeagueContent(parseInt(id))
+  
+  const baseUrl = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3000' 
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+
   return {
-    title: `${league.league.name} - Bảng xếp hạng & Lịch thi đấu`,
-    description: `Bảng xếp hạng, lịch thi đấu và kết quả ${league.league.name} ${CURRENT_SEASON}.`,
+    title: leagueContent?.title || `${league.league.name} - Bảng xếp hạng & Lịch thi đấu`,
+    description: leagueContent?.excerpt || `Bảng xếp hạng, lịch thi đấu và kết quả ${league.league.name} ${CURRENT_SEASON}.`,
+    alternates: {
+      canonical: `${baseUrl}/giai-dau/${id}`,
+    },
+    openGraph: {
+      title: leagueContent?.title || `${league.league.name} - Bảng xếp hạng & Lịch thi đấu`,
+      description: leagueContent?.excerpt || `Bảng xếp hạng, lịch thi đấu và kết quả ${league.league.name} ${CURRENT_SEASON}.`,
+      images: [league.league.logo],
+    },
   }
 }
 
@@ -114,10 +134,38 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
 
   return (
     <div className="space-y-4">
-      {/* Nội dung giới thiệu giải đấu */}
-      {leagueContent && (
-        <PageContentSection content={leagueContent} />
-      )}
+      {/* JSON-LD League schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ 
+          __html: JSON.stringify(leagueJsonLd({
+            id: leagueId,
+            name: league.league.name,
+            logo: league.league.logo,
+            country: league.country.name,
+            season: leagueSeason,
+          }))
+        }}
+      />
+
+      {/* JSON-LD Breadcrumb */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ 
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Trang chủ', url: BASE_URL },
+            { name: 'Giải đấu', url: `${BASE_URL}/giai-dau` },
+            { name: league.league.name, url: `${BASE_URL}/giai-dau/${id}` },
+          ]))
+        }}
+      />
+
+      <Breadcrumb 
+        items={[
+          { name: 'Giải đấu', href: '/bang-xep-hang' },
+          { name: league.league.name },
+        ]}
+      />
 
       {/* Header giải đấu */}
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
@@ -210,6 +258,11 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
           </Suspense>
         )}
       </div>
+
+      {/* Nội dung giới thiệu giải đấu - di chuyển xuống cuối */}
+      {leagueContent && (
+        <PageContentSection content={leagueContent} />
+      )}
     </div>
   )
 }

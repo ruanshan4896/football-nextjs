@@ -1,6 +1,8 @@
 import type { Fixture } from './api-football'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com'
+const BASE_URL = process.env.NODE_ENV === 'development' 
+  ? 'http://localhost:3000' 
+  : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
 
 /**
  * JSON-LD Schema cho trang chi tiết trận đấu
@@ -103,5 +105,100 @@ export function websiteJsonLd() {
       },
       'query-input': 'required name=search_term_string',
     },
+  }
+}
+
+/**
+ * JSON-LD Schema cho Organization (trang chủ)
+ */
+export function organizationJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'BóngĐá Live',
+    url: BASE_URL,
+    logo: `${BASE_URL}/icon.png`,
+    description: 'Website cung cấp livescore bóng đá trực tiếp, kết quả, bảng xếp hạng và nhận định chuyên nghiệp',
+    sameAs: [
+      // Add social media URLs when available
+    ],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      availableLanguage: 'Vietnamese',
+    },
+  }
+}
+
+/**
+ * JSON-LD Schema cho SportsLeague (trang giải đấu)
+ */
+export function leagueJsonLd(league: {
+  id: number
+  name: string
+  logo: string
+  country: string
+  season: number
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SportsOrganization',
+    '@id': `${BASE_URL}/giai-dau/${league.id}`,
+    name: league.name,
+    sport: 'Soccer',
+    logo: league.logo,
+    location: {
+      '@type': 'Country',
+      name: league.country,
+    },
+    url: `${BASE_URL}/giai-dau/${league.id}`,
+    description: `Bảng xếp hạng, lịch thi đấu và kết quả ${league.name} mùa ${league.season}`,
+  }
+}
+
+/**
+ * JSON-LD Schema cho SportsTeam (trang đội bóng)
+ */
+export function teamJsonLd(team: {
+  id: number
+  name: string
+  logo: string
+  country?: string
+  founded?: number
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SportsTeam',
+    '@id': `${BASE_URL}/doi-bong/${team.id}`,
+    name: team.name,
+    sport: 'Soccer',
+    logo: team.logo,
+    url: `${BASE_URL}/doi-bong/${team.id}`,
+    ...(team.country && {
+      location: {
+        '@type': 'Country',
+        name: team.country,
+      },
+    }),
+    ...(team.founded && {
+      foundingDate: team.founded.toString(),
+    }),
+    description: `Thông tin, thống kê và lịch thi đấu của ${team.name}`,
+  }
+}
+
+/**
+ * JSON-LD Schema cho BreadcrumbList
+ */
+export function breadcrumbJsonLd(items: Array<{ name: string; url: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
   }
 }

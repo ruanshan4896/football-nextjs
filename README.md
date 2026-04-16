@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚽ Bóng Đá Live - Football Data Platform
 
-## Getting Started
+A comprehensive football data platform built with Next.js, providing live scores, fixtures, standings, odds, and match predictions for Vietnamese football fans.
 
-First, run the development server:
+## 🎯 Features
 
+- **Live Scores & Fixtures** - Real-time match data with minute-by-minute updates
+- **League Standings** - Complete league tables with form indicators
+- **Odds Comparison** - Multi-bookmaker odds display with mobile-optimized layout
+- **Match Predictions** - Editorial content and match analysis
+- **Team & League Pages** - Detailed statistics and information
+- **Admin CMS** - Content management system for articles and page content
+- **Mobile-First Design** - Optimized for mobile users with app-like experience
+
+## 🛠 Tech Stack
+
+- **Framework:** Next.js 16 (App Router) with Server Components
+- **Styling:** Tailwind CSS 4
+- **Database:** Supabase (PostgreSQL)
+- **Caching:** Upstash Redis
+- **Data Source:** API-Football.com
+- **Deployment:** Netlify / Vercel / Railway
+- **Language:** TypeScript
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20.9.0 or higher
+- npm/yarn/pnpm
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd temp-football
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+cp .env.local.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Required environment variables:
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
+- `UPSTASH_REDIS_REST_URL` - Redis connection URL
+- `UPSTASH_REDIS_REST_TOKEN` - Redis auth token
+- `API_FOOTBALL_KEY` - API-Football.com API key
 
-## Learn More
+4. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📁 Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+├── app/                    # Next.js App Router pages
+│   ├── (admin)/           # Admin panel routes
+│   ├── api/               # API routes & cron jobs
+│   ├── bang-xep-hang/     # League standings
+│   ├── doi-bong/          # Team pages
+│   ├── giai-dau/          # League pages
+│   ├── lich-thi-dau/      # Fixtures
+│   ├── nhan-dinh/         # Match predictions
+│   ├── tran-dau/          # Match details
+│   └── ty-le-keo/         # Odds comparison
+├── components/            # Reusable UI components
+│   ├── layout/           # Layout components
+│   └── ui/               # UI components
+├── lib/                  # Utilities & services
+│   └── services/         # Data service layer
+└── supabase/             # Database schema & migrations
+```
 
-## Deploy on Vercel
+## 🔧 Key Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Content Management System
+- **Article Type:** News and match predictions displayed at `/nhan-dinh`
+- **Page Content:** Static content for specific pages (guides, introductions)
+- **Path-Based Routing:** Flexible content matching using `page_path`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Data Caching Strategy
+- **Redis Cache:** API-Football data cached to avoid rate limits
+- **Scheduled Updates:** Cron jobs for live scores, fixtures, and standings
+- **ISR:** Incremental Static Regeneration for optimal performance
+
+### Mobile-First Design
+- **Responsive Layout:** 3-column desktop, mobile-optimized navigation
+- **Touch-Friendly:** Optimized for mobile interactions
+- **Fast Loading:** Minimal JavaScript bundle with Server Components
+
+## 🚀 Deployment
+
+The application supports multiple deployment platforms:
+
+### Netlify
+```bash
+npm run build
+# Deploy to Netlify with netlify.toml configuration
+```
+
+### Vercel
+```bash
+npm run build
+# Deploy to Vercel with vercel.json configuration
+```
+
+### Railway
+```bash
+npm run build
+# Deploy to Railway with railway.toml configuration
+```
+
+## 📊 Database Schema
+
+### Articles Table
+- `id, title, slug, content, excerpt, cover_image`
+- `author, status, created_at, updated_at, published_at`
+- `match_id, league_id` (legacy compatibility)
+- `content_type` ('article' | 'page_content')
+- `page_type` ('general' for all page_content)
+- `page_path` (full path for content matching)
+
+## 🔄 Cron Jobs
+
+- **Live Scores:** Every minute (`/api/cron/live`)
+- **Fixtures:** Daily at 00:01 (`/api/cron/fixtures`)
+- **Standings:** Hourly (`/api/cron/standings`)
+
+## 📝 License
+
+This project is private and proprietary.
+
+## 🤝 Contributing
+
+This is a private project. For development guidelines, see `project_status.md`.

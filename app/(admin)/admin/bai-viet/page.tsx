@@ -30,15 +30,15 @@ export default async function BaiVietPage() {
 
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
         {/* Desktop table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[800px]">
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100 text-xs text-gray-400 text-left">
                 <th className="px-4 py-3 font-medium">Tiêu đề</th>
                 <th className="px-4 py-3 font-medium w-28">Trạng thái</th>
                 <th className="px-4 py-3 font-medium w-24">Match ID</th>
                 <th className="px-4 py-3 font-medium w-32">Ngày tạo</th>
-                <th className="px-4 py-3 font-medium w-40">Thao tác</th>
+                <th className="px-4 py-3 font-medium w-32">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -71,7 +71,7 @@ export default async function BaiVietPage() {
                     {formatAdminDate(a.created_at)}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2">
                       <Link
                         href={`/admin/bai-viet/${a.id}`}
                         className="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
@@ -79,7 +79,6 @@ export default async function BaiVietPage() {
                       >
                         <Pencil size={16} />
                       </Link>
-                      <span className="text-xs text-red-500">TEST</span>
                       <DeleteArticleButton id={a.id} title={a.title} />
                     </div>
                   </td>
@@ -90,37 +89,42 @@ export default async function BaiVietPage() {
         </div>
 
         {/* Mobile list */}
-        <ul className="divide-y divide-gray-50 hidden">
+        <div className="md:hidden">
           {(!articles || articles.length === 0) && (
-            <li className="px-4 py-10 text-center text-sm text-gray-400">Chưa có bài viết nào</li>
+            <div className="px-4 py-10 text-center text-sm text-gray-400">Chưa có bài viết nào</div>
           )}
           {articles?.map((a) => (
-            <li key={a.id} className="flex items-center gap-3 px-4 py-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 truncate">{a.title}</p>
-                <div className="mt-0.5 flex items-center gap-2">
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                    a.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {a.status === 'published' ? 'Đã đăng' : 'Nháp'}
-                  </span>
-                  {a.match_id && (
-                    <span className="text-xs text-gray-400">#{a.match_id}</span>
-                  )}
+            <div key={a.id} className="border-b border-gray-50 last:border-b-0 px-4 py-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-800 truncate">{a.title}</p>
+                  <p className="text-xs text-gray-400 truncate mt-0.5">{a.slug}</p>
+                  <div className="mt-2 flex items-center gap-2 flex-wrap">
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                      a.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {a.status === 'published' ? 'Đã đăng' : 'Nháp'}
+                    </span>
+                    {a.match_id && (
+                      <span className="text-xs text-gray-400">Match #{a.match_id}</span>
+                    )}
+                    <span className="text-xs text-gray-400">{formatAdminDate(a.created_at)}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Link 
+                    href={`/admin/bai-viet/${a.id}`} 
+                    className="rounded-lg p-2 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    title="Chỉnh sửa"
+                  >
+                    <Pencil size={16} />
+                  </Link>
+                  <DeleteArticleButton id={a.id} title={a.title} />
                 </div>
               </div>
-              <Link 
-                href={`/admin/bai-viet/${a.id}`} 
-                className="rounded-lg p-2 text-gray-400 hover:bg-blue-50 hover:text-blue-600"
-                title="Chỉnh sửa"
-              >
-                <Pencil size={16} />
-              </Link>
-              <span className="text-xs text-red-500">TEST</span>
-              <DeleteArticleButton id={a.id} title={a.title} />
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   )

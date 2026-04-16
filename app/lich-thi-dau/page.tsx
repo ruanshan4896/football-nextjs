@@ -8,9 +8,18 @@ import { getVNDateString, formatShortDate } from '@/lib/date'
 import PageContentSection from '@/components/ui/PageContent'
 import { getPageContent, getCurrentPageContent } from '@/lib/services/content'
 
-export const metadata: Metadata = {
-  title: 'Lịch thi đấu bóng đá hôm nay',
-  description: 'Lịch thi đấu bóng đá hôm nay và sắp tới của các giải đấu hàng đầu thế giới.',
+export async function generateMetadata(props: PageProps<'/lich-thi-dau'>): Promise<Metadata> {
+  const searchParams = await props.searchParams ?? {}
+  
+  // Lấy nội dung trang - ưu tiên content có query params, fallback về trang chính
+  const pageContentWithParams = await getCurrentPageContent('/lich-thi-dau', searchParams)
+  const pageContentDefault = pageContentWithParams ? null : await getPageContent('fixtures')
+  const pageContent = pageContentWithParams || pageContentDefault
+  
+  return {
+    title: pageContent?.title || 'Lịch thi đấu bóng đá hôm nay',
+    description: pageContent?.excerpt || 'Lịch thi đấu bóng đá hôm nay và sắp tới của các giải đấu hàng đầu thế giới.',
+  }
 }
 
 // Helper lấy ngày VN — dùng từ lib/date
@@ -67,9 +76,6 @@ export default async function LichThiDauPage(props: PageProps<'/lich-thi-dau'>) 
 
   return (
     <div className="space-y-3">
-      {/* Nội dung trang (nếu có) */}
-      {pageContent && <PageContentSection content={pageContent} />}
-      
       {/* Date picker */}
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
         <div className="flex items-center gap-2 bg-green-700 px-4 py-3">
@@ -119,6 +125,9 @@ export default async function LichThiDauPage(props: PageProps<'/lich-thi-dau'>) 
           <FixturesForDate date={selectedDate} />
         </Suspense>
       </div>
+
+      {/* Nội dung trang (nếu có) - di chuyển xuống cuối */}
+      {pageContent && <PageContentSection content={pageContent} />}
     </div>
   )
 }

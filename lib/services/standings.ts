@@ -14,6 +14,7 @@ export const TRACKED_LEAGUES = [
   { id: 61,  name: 'Ligue 1',          season: 2025 },
   { id: 2,   name: 'Champions League', season: 2025 },
   { id: 340, name: 'V.League 1',       season: 2026 }, // V.League dùng năm kết thúc mùa
+  { id: 1,   name: 'World Cup',        season: 2026, type: 'tournament' }, // World Cup 2026
 ] as const
 
 /**

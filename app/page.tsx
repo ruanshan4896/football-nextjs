@@ -1,20 +1,107 @@
 import { Suspense } from 'react'
-import { Activity, Calendar } from 'lucide-react'
-import FixtureList from '@/components/ui/FixtureList'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import Image from 'next/image'
+import { 
+  Activity, 
+  Calendar, 
+  TrendingUp, 
+  Trophy, 
+  Users, 
+  BarChart3,
+  ArrowRight,
+  Star,
+  Zap,
+  Globe
+} from 'lucide-react'
 import { getLiveMatches } from '@/lib/services/live'
 import { getTodayFixtures } from '@/lib/services/fixtures'
-import { websiteJsonLd } from '@/lib/json-ld'
+import { getOddsByLeague } from '@/lib/services/odds'
+import { supabase } from '@/lib/supabase'
+import { formatArticleDate } from '@/lib/date'
+import { websiteJsonLd, organizationJsonLd } from '@/lib/json-ld'
+import MatchRow from '@/components/ui/MatchRow'
+import ArticleCard from '@/components/ui/ArticleCard'
 
-// --- Skeleton ---
-function MatchListSkeleton() {
+export const metadata: Metadata = {
+  title: 'BongDaWap - Cập nhật bóng đá 24/7',
+  description: 'Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam. Livescore trực tiếp, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định chuyên sâu.',
+}
+
+// Hero Section với branding
+function HeroSection() {
   return (
-    <div className="divide-y divide-gray-50">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3 px-3 py-3">
-          <div className="h-8 w-10 animate-pulse rounded bg-gray-200" />
-          <div className="flex-1 space-y-2">
-            <div className="h-3 w-3/4 animate-pulse rounded bg-gray-200" />
-            <div className="h-3 w-2/3 animate-pulse rounded bg-gray-200" />
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 via-green-700 to-green-800 dark:from-green-700 dark:via-green-800 dark:to-green-900">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="h-full w-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
+      </div>
+      
+      <div className="relative px-6 py-12 md:px-8 md:py-16">
+        <div className="mx-auto max-w-4xl text-center">
+          {/* Logo & Brand */}
+          <div className="mb-6 flex items-center justify-center gap-3">
+            <div className="rounded-full bg-white/10 p-3 backdrop-blur-sm">
+              <span className="text-3xl">⚽</span>
+            </div>
+            <div className="text-left">
+              <h1 className="text-3xl font-bold text-white md:text-4xl">
+                BongDa<span className="text-yellow-300">Wap</span>
+              </h1>
+              <p className="text-sm text-green-100">Cập nhật bóng đá 24/7</p>
+            </div>
+          </div>
+
+          {/* Tagline */}
+          <h2 className="mb-4 text-xl font-semibold text-white md:text-2xl">
+            Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam
+          </h2>
+          <p className="mb-8 text-green-100 md:text-lg">
+            Livescore trực tiếp, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định từ các chuyên gia hàng đầu
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href="/livescore"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-green-700 transition-all hover:bg-green-50 hover:scale-105"
+            >
+              <Activity size={20} />
+              Xem Livescore
+            </Link>
+            <Link
+              href="/nhan-dinh"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-white/30 px-6 py-3 font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10"
+            >
+              <TrendingUp size={20} />
+              Nhận định kèo
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Quick Stats
+function QuickStats() {
+  return (
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      {[
+        { icon: Activity, label: 'Trận Live', value: '12+', color: 'text-red-500' },
+        { icon: Calendar, label: 'Trận hôm nay', value: '50+', color: 'text-blue-500' },
+        { icon: Trophy, label: 'Giải đấu', value: '100+', color: 'text-yellow-500' },
+        { icon: Users, label: 'Người dùng', value: '10K+', color: 'text-green-500' },
+      ].map((stat, i) => (
+        <div key={i} className="rounded-xl bg-white dark:bg-gray-800 p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className={`rounded-lg bg-gray-50 dark:bg-gray-700 p-2 ${stat.color}`}>
+              <stat.icon size={20} />
+            </div>
+            <div>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{stat.value}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{stat.label}</p>
+            </div>
           </div>
         </div>
       ))}
@@ -22,94 +109,270 @@ function MatchListSkeleton() {
   )
 }
 
-// --- Live Section (Server Component, fetch từ Redis) ---
-async function LiveSection() {
+// Live Matches Preview
+async function LiveMatchesPreview() {
   const fixtures = await getLiveMatches()
+  const displayFixtures = fixtures.slice(0, 3) // Chỉ hiển thị 3 trận
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-      <div className="flex items-center gap-2 bg-green-700 px-4 py-3">
-        <Activity size={15} className="text-white" />
-        <h2 className="text-sm font-semibold text-white">Đang diễn ra</h2>
-        {fixtures.length > 0 && (
-          <span className="ml-1 rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white animate-pulse">
-            {fixtures.length} LIVE
-          </span>
-        )}
+    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div className="flex items-center justify-between bg-red-600 dark:bg-red-700 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Activity size={16} className="text-white" />
+          <h3 className="font-semibold text-white">Đang diễn ra</h3>
+          {fixtures.length > 0 && (
+            <span className="rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold text-white animate-pulse">
+              {fixtures.length} LIVE
+            </span>
+          )}
+        </div>
+        <Link href="/livescore" className="text-xs text-red-100 hover:text-white">
+          Xem tất cả →
+        </Link>
       </div>
-      <FixtureList
-        fixtures={fixtures}
-        emptyMessage="Hiện không có trận nào đang diễn ra"
-      />
+      
+      {displayFixtures.length > 0 ? (
+        <div>
+          {displayFixtures.map((fixture) => (
+            <MatchRow key={fixture.fixture.id} fixture={fixture} />
+          ))}
+        </div>
+      ) : (
+        <div className="px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500">
+          Hiện không có trận nào đang diễn ra
+        </div>
+      )}
     </div>
   )
 }
 
-// --- Today Fixtures Section (Server Component) ---
-async function TodaySection() {
-  const fixtures = await getTodayFixtures()
-
-  // Lọc ra các trận chưa đá (NS) và đã kết thúc (FT, AET, PEN)
-  const upcoming = fixtures.filter((f) => f.fixture.status.short === 'NS')
-  const finished = fixtures.filter((f) =>
-    ['FT', 'AET', 'PEN'].includes(f.fixture.status.short)
-  )
+// Featured Articles
+async function FeaturedArticles() {
+  const { data: articles } = await supabase
+    .from('articles')
+    .select('id, title, slug, excerpt, cover_image, author, published_at, match_id, league_id')
+    .eq('status', 'published')
+    .eq('content_type', 'article')
+    .order('published_at', { ascending: false })
+    .limit(4)
 
   return (
-    <>
-      {/* Sắp diễn ra */}
-      {upcoming.length > 0 && (
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-          <div className="flex items-center gap-2 bg-blue-700 px-4 py-3">
-            <Calendar size={15} className="text-white" />
-            <h2 className="text-sm font-semibold text-white">Sắp diễn ra hôm nay</h2>
-            <span className="ml-auto text-xs text-blue-200">{upcoming.length} trận</span>
-          </div>
-          <FixtureList fixtures={upcoming} />
+    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div className="flex items-center justify-between bg-blue-600 dark:bg-blue-700 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Star size={16} className="text-white" />
+          <h3 className="font-semibold text-white">Nhận định nổi bật</h3>
+        </div>
+        <Link href="/nhan-dinh" className="text-xs text-blue-100 hover:text-white">
+          Xem tất cả →
+        </Link>
+      </div>
+      
+      {articles && articles.length > 0 ? (
+        <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          {articles.map((article) => (
+            <ArticleCard key={article.id} article={article} variant="compact" />
+          ))}
+        </div>
+      ) : (
+        <div className="px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500">
+          Chưa có bài viết nào
         </div>
       )}
-
-      {/* Kết quả hôm nay */}
-      {finished.length > 0 && (
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-          <div className="flex items-center gap-2 bg-gray-600 px-4 py-3">
-            <h2 className="text-sm font-semibold text-white">Kết quả hôm nay</h2>
-            <span className="ml-auto text-xs text-gray-300">{finished.length} trận</span>
-          </div>
-          <FixtureList fixtures={finished} />
-        </div>
-      )}
-
-      {upcoming.length === 0 && finished.length === 0 && (
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-          <div className="flex items-center gap-2 bg-gray-600 px-4 py-3">
-            <Calendar size={15} className="text-white" />
-            <h2 className="text-sm font-semibold text-white">Lịch thi đấu hôm nay</h2>
-          </div>
-          <div className="px-4 py-10 text-center text-sm text-gray-400">
-            Không có trận đấu nào hôm nay
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   )
 }
 
-// --- Page ---
+// Hot Odds Preview
+async function HotOddsPreview() {
+  try {
+    const { odds } = await getOddsByLeague(39, undefined, 1, 8) // Premier League
+    const hotOdds = odds.slice(0, 3)
+
+    return (
+      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="flex items-center justify-between bg-orange-600 dark:bg-orange-700 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <TrendingUp size={16} className="text-white" />
+            <h3 className="font-semibold text-white">Kèo hot Premier League</h3>
+          </div>
+          <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">
+            Xem tất cả →
+          </Link>
+        </div>
+        
+        {hotOdds.length > 0 ? (
+          <div className="p-4 space-y-3">
+            {hotOdds.map((odd, i) => (
+              <div key={odd.fixture.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Trận #{i + 1}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {new Date(odd.fixture.date).toLocaleDateString('vi-VN')}
+                  </p>
+                </div>
+                <Link
+                  href={`/tran-dau/${odd.fixture.id}`}
+                  className="text-xs text-orange-600 dark:text-orange-400 hover:underline"
+                >
+                  Xem kèo →
+                </Link>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500">
+            Đang cập nhật kèo...
+          </div>
+        )}
+      </div>
+    )
+  } catch {
+    return (
+      <div className="rounded-xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="flex items-center justify-between bg-orange-600 dark:bg-orange-700 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <TrendingUp size={16} className="text-white" />
+            <h3 className="font-semibold text-white">Kèo hot</h3>
+          </div>
+          <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">
+            Xem tất cả →
+          </Link>
+        </div>
+        <div className="px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500">
+          Đang cập nhật...
+        </div>
+      </div>
+    )
+  }
+}
+
+// Features Grid
+function FeaturesGrid() {
+  const features = [
+    {
+      icon: Zap,
+      title: 'Cập nhật Real-time',
+      description: 'Livescore và kết quả được cập nhật tức thời',
+      color: 'bg-yellow-500',
+      href: '/livescore'
+    },
+    {
+      icon: BarChart3,
+      title: 'Thống kê chi tiết',
+      description: 'Bảng xếp hạng và số liệu đầy đủ',
+      color: 'bg-blue-500',
+      href: '/bang-xep-hang'
+    },
+    {
+      icon: TrendingUp,
+      title: 'Tỷ lệ kèo chính xác',
+      description: 'Kèo từ các nhà cái uy tín nhất',
+      color: 'bg-green-500',
+      href: '/ty-le-keo'
+    },
+    {
+      icon: Globe,
+      title: 'Giải đấu toàn cầu',
+      description: 'Theo dõi hơn 100 giải đấu trên thế giới',
+      color: 'bg-purple-500',
+      href: '/giai-dau/39'
+    }
+  ]
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {features.map((feature, i) => (
+        <Link
+          key={i}
+          href={feature.href}
+          className="group rounded-xl bg-white dark:bg-gray-800 p-6 shadow-sm border border-gray-100 dark:border-gray-700 transition-all hover:shadow-md hover:scale-105"
+        >
+          <div className={`inline-flex rounded-lg ${feature.color} p-3 text-white mb-4`}>
+            <feature.icon size={24} />
+          </div>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            {feature.title}
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            {feature.description}
+          </p>
+          <div className="flex items-center text-sm font-medium text-green-600 dark:text-green-400 group-hover:gap-2 transition-all">
+            Khám phá
+            <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+      ))}
+    </div>
+  )
+}
+
+// Skeleton components
+function ContentSkeleton() {
+  return (
+    <div className="rounded-xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div className="h-12 bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+      <div className="p-4 space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-16 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"></div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Main Page Component
 export default function HomePage() {
   return (
-    <div className="space-y-4">
-      {/* JSON-LD WebSite schema */}
+    <div className="space-y-8">
+      {/* JSON-LD Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
       />
-      <Suspense fallback={<MatchListSkeleton />}>
-        <LiveSection />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
+      />
+
+      {/* Hero Section */}
+      <HeroSection />
+
+      {/* Quick Stats */}
+      <QuickStats />
+
+      {/* Main Content Grid */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Live Matches */}
+        <Suspense fallback={<ContentSkeleton />}>
+          <LiveMatchesPreview />
+        </Suspense>
+
+        {/* Featured Articles */}
+        <Suspense fallback={<ContentSkeleton />}>
+          <FeaturedArticles />
+        </Suspense>
+      </div>
+
+      {/* Hot Odds */}
+      <Suspense fallback={<ContentSkeleton />}>
+        <HotOddsPreview />
       </Suspense>
-      <Suspense fallback={<MatchListSkeleton />}>
-        <TodaySection />
-      </Suspense>
+
+      {/* Features Grid */}
+      <div>
+        <div className="mb-6 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            Tính năng nổi bật
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Khám phá những tính năng tuyệt vời của BongDaWap
+          </p>
+        </div>
+        <FeaturesGrid />
+      </div>
     </div>
   )
 }

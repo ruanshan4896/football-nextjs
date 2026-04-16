@@ -4,6 +4,7 @@ import Header from '@/components/layout/Header'
 import BottomNav from '@/components/layout/BottomNav'
 import LeftSidebar from '@/components/layout/LeftSidebar'
 import RightSidebar from '@/components/layout/RightSidebar'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com'
 
@@ -17,29 +18,29 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'BóngĐá Live - Livescore, Kết quả, BXH, Nhận định',
-    template: '%s | BóngĐá Live',
+    default: 'BongDaWap - Cập nhật bóng đá 24/7',
+    template: '%s | BongDaWap',
   },
   description:
-    'Cập nhật livescore bóng đá trực tiếp, kết quả, bảng xếp hạng, lịch thi đấu và nhận định các giải đấu hàng đầu thế giới.',
-  keywords: ['livescore', 'bóng đá', 'kết quả bóng đá', 'bảng xếp hạng', 'nhận định', 'tỷ lệ kèo', 'premier league', 'la liga'],
-  authors: [{ name: 'BóngĐá Live' }],
-  creator: 'BóngĐá Live',
+    'Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam. Livescore trực tiếp, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định chuyên sâu.',
+  keywords: ['bongdawap', 'livescore', 'bóng đá', 'kết quả bóng đá', 'bảng xếp hạng', 'nhận định', 'tỷ lệ kèo', 'premier league', 'la liga'],
+  authors: [{ name: 'BongDaWap' }],
+  creator: 'BongDaWap',
   openGraph: {
     type: 'website',
     locale: 'vi_VN',
     url: BASE_URL,
-    siteName: 'BóngĐá Live',
-    title: 'BóngĐá Live - Livescore, Kết quả, BXH, Nhận định',
-    description: 'Cập nhật livescore bóng đá trực tiếp, kết quả, bảng xếp hạng và nhận định.',
+    siteName: 'BongDaWap',
+    title: 'BongDaWap - Cập nhật bóng đá 24/7',
+    description: 'Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam. Livescore trực tiếp, kết quả, bảng xếp hạng và nhận định chuyên sâu.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BóngĐá Live',
-    description: 'Livescore bóng đá trực tiếp, kết quả, BXH và nhận định.',
+    title: 'BongDaWap',
+    description: 'Cập nhật bóng đá 24/7 - Livescore, kết quả, BXH và nhận định.',
   },
   alternates: {
-    canonical: BASE_URL,
+    canonical: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : BASE_URL,
   },
   robots: {
     index: true,
@@ -55,43 +56,45 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" className="h-full">
-      <body className="min-h-full bg-gray-100 antialiased">
-        {/* Header - sticky top */}
-        <Header />
+      <body className="min-h-full bg-gray-100 dark:bg-gray-900 antialiased">
+        <ThemeProvider>
+          {/* Header - sticky top */}
+          <Header />
 
-        {/* Main wrapper: 3 cột trên Desktop, 1 cột trên Mobile */}
-        <div className="mx-auto flex w-full max-w-screen-xl gap-4 px-4 py-4
-                        pb-20 md:pb-4">
+          {/* Main wrapper: 3 cột trên Desktop, 1 cột trên Mobile */}
+          <div className="mx-auto flex w-full max-w-screen-xl gap-4 px-4 py-4
+                          pb-20 md:pb-4">
+            {/*
+             * LEFT SIDEBAR
+             * - Ẩn trên mobile/tablet (lg:flex)
+             * - Hiện trên Desktop >= 1024px
+             */}
+            <LeftSidebar />
+
+            {/*
+             * MAIN CONTENT
+             * - Chiếm toàn bộ width trên mobile
+             * - Chiếm ~55% trên Desktop (flex-1 tự co giãn)
+             */}
+            <main className="min-w-0 flex-1">
+              {children}
+            </main>
+
+            {/*
+             * RIGHT SIDEBAR
+             * - Ẩn trên mobile/tablet (xl:flex)
+             * - Hiện trên Desktop >= 1280px
+             */}
+            <RightSidebar />
+          </div>
+
           {/*
-           * LEFT SIDEBAR
-           * - Ẩn trên mobile/tablet (lg:flex)
-           * - Hiện trên Desktop >= 1024px
+           * BOTTOM NAVIGATION
+           * - Chỉ hiển thị trên Mobile (md:hidden trong component)
+           * - Fixed bottom, z-index cao
            */}
-          <LeftSidebar />
-
-          {/*
-           * MAIN CONTENT
-           * - Chiếm toàn bộ width trên mobile
-           * - Chiếm ~55% trên Desktop (flex-1 tự co giãn)
-           */}
-          <main className="min-w-0 flex-1">
-            {children}
-          </main>
-
-          {/*
-           * RIGHT SIDEBAR
-           * - Ẩn trên mobile/tablet (xl:flex)
-           * - Hiện trên Desktop >= 1280px
-           */}
-          <RightSidebar />
-        </div>
-
-        {/*
-         * BOTTOM NAVIGATION
-         * - Chỉ hiển thị trên Mobile (md:hidden trong component)
-         * - Fixed bottom, z-index cao
-         */}
-        <BottomNav />
+          <BottomNav />
+        </ThemeProvider>
       </body>
     </html>
   )

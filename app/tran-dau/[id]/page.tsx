@@ -7,10 +7,13 @@ import { getFixtureDetails } from '@/lib/services/fixtures'
 import { getOddsByFixture, getMatchWinner, getOverUnder, getAsianHandicap } from '@/lib/services/odds'
 import { supabase } from '@/lib/supabase'
 import MatchStatusBadge from '@/components/ui/MatchStatusBadge'
-import { fixtureJsonLd } from '@/lib/json-ld'
+import { fixtureJsonLd, breadcrumbJsonLd } from '@/lib/json-ld'
 import BackButton from '@/components/ui/BackButton'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 import { formatMatchDateTime, formatArticleDate } from '@/lib/date'
 import type { FixtureDetail, FixtureEvent } from '@/lib/api-football'
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com'
 
 export async function generateMetadata(props: PageProps<'/tran-dau/[id]'>): Promise<Metadata> {
   const { id } = await props.params
@@ -19,10 +22,22 @@ export async function generateMetadata(props: PageProps<'/tran-dau/[id]'>): Prom
   const { teams, goals, fixture: f, league } = fixture
   const score = `${goals.home ?? '?'} - ${goals.away ?? '?'}`
   const title = `${teams.home.name} ${score} ${teams.away.name} | ${league.name}`
+  
+  const baseUrl = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3000' 
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+
   return {
     title,
     description: `Kết quả và thông tin chi tiết trận ${teams.home.name} vs ${teams.away.name} - ${league.name}`,
-    openGraph: { title, images: [teams.home.logo, teams.away.logo] },
+    alternates: {
+      canonical: `${baseUrl}/tran-dau/${id}`,
+    },
+    openGraph: { 
+      title, 
+      description: `Kết quả và thông tin chi tiết trận ${teams.home.name} vs ${teams.away.name} - ${league.name}`,
+      images: [teams.home.logo, teams.away.logo] 
+    },
   }
 }
 
@@ -490,11 +505,34 @@ export default async function TranDauPage(props: PageProps<'/tran-dau/[id]'>) {
   return (
     <div className="space-y-4">
       {fixture && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(fixtureJsonLd(fixture)) }}
-        />
+        <>
+          {/* JSON-LD SportsEvent schema */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(fixtureJsonLd(fixture)) }}
+          />
+
+          {/* JSON-LD Breadcrumb */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ 
+              __html: JSON.stringify(breadcrumbJsonLd([
+                { name: 'Trang chủ', url: BASE_URL },
+                { name: 'Trận đấu', url: `${BASE_URL}/tran-dau` },
+                { name: `${fixture.teams.home.name} vs ${fixture.teams.away.name}`, url: `${BASE_URL}/tran-dau/${id}` },
+              ]))
+            }}
+          />
+        </>
       )}
+
+      <Breadcrumb 
+        items={[
+          { name: 'Trận đấu' },
+          { name: fixture ? `${fixture.teams.home.name} vs ${fixture.teams.away.name}` : 'Chi tiết trận đấu' },
+        ]}
+        className="mb-2"
+      />
 
       <BackButton />
 

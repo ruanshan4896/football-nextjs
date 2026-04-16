@@ -9,6 +9,7 @@ import MatchStatusBadge from '@/components/ui/MatchStatusBadge'
 import { articleJsonLd } from '@/lib/json-ld'
 import { formatArticleDateTime } from '@/lib/date'
 import BackButton from '@/components/ui/BackButton'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 
 // Dynamic metadata
 export async function generateMetadata(props: PageProps<'/nhan-dinh/[slug]'>): Promise<Metadata> {
@@ -22,9 +23,16 @@ export async function generateMetadata(props: PageProps<'/nhan-dinh/[slug]'>): P
 
   if (!article) return { title: 'Bài viết không tồn tại' }
 
+  const baseUrl = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3000' 
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+
   return {
     title: article.title,
     description: article.excerpt ?? undefined,
+    alternates: {
+      canonical: `${baseUrl}/nhan-dinh/${slug}`,
+    },
     openGraph: {
       title: article.title,
       description: article.excerpt ?? undefined,
@@ -56,6 +64,14 @@ export default async function NhanDinhDetailPage(props: PageProps<'/nhan-dinh/[s
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd(article)) }}
+      />
+
+      <Breadcrumb 
+        items={[
+          { name: 'Nhận định', href: '/nhan-dinh' },
+          { name: article.title },
+        ]}
+        className="mb-2"
       />
 
       {/* Back */}

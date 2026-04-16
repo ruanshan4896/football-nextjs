@@ -14,6 +14,15 @@
   "dependencies": {
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.0",
+    "@tiptap/extension-bullet-list": "^3.22.3",
+    "@tiptap/extension-image": "^3.22.3",
+    "@tiptap/extension-link": "^3.22.3",
+    "@tiptap/extension-list-item": "^3.22.3",
+    "@tiptap/extension-ordered-list": "^3.22.3",
+    "@tiptap/extension-text-align": "^3.22.3",
+    "@tiptap/pm": "^3.22.3",
+    "@tiptap/react": "^3.22.3",
+    "@tiptap/starter-kit": "^3.22.3",
     "@upstash/redis": "^1.37.0",
     "lucide-react": "^1.8.0",
     "next": "16.2.3",
@@ -21,7 +30,6 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
-    "@netlify/functions": "^5.2.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

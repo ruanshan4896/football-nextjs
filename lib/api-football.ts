@@ -187,6 +187,19 @@ export async function fetchTeamById(teamId: number): Promise<Team | null> {
   return data.response[0] ?? null
 }
 
+/** Tìm kiếm đội bóng theo tên */
+export async function searchTeams(query: string): Promise<Team[]> {
+  if (!query || query.length < 3) return []
+  
+  try {
+    const data = await apiFetch<Team>('teams', { search: query })
+    return data.response.slice(0, 15) // Giới hạn 15 kết quả
+  } catch (error) {
+    console.error('Error searching teams:', error)
+    return []
+  }
+}
+
 /** Lấy thống kê đội bóng theo giải đấu và mùa */
 export async function fetchTeamStatistics(
   teamId: number,

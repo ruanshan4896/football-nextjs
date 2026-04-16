@@ -8,16 +8,36 @@ import { getTeamById, getTeamStatistics, getTeamFixtures, getTeamLeagues } from 
 import { TRACKED_LEAGUES } from '@/lib/services/standings'
 import FixtureList from '@/components/ui/FixtureList'
 import BackButton from '@/components/ui/BackButton'
+import Breadcrumb from '@/components/ui/Breadcrumb'
 import PageContentSection from '@/components/ui/PageContent'
 import { getTeamContent } from '@/lib/services/content'
+import { teamJsonLd, breadcrumbJsonLd } from '@/lib/json-ld'
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com'
 
 export async function generateMetadata(props: PageProps<'/doi-bong/[id]'>): Promise<Metadata> {
   const { id } = await props.params
   const team = await getTeamById(parseInt(id))
   if (!team) return { title: 'Đội bóng không tồn tại' }
+  
+  // Lấy nội dung CMS cho đội bóng
+  const teamContent = await getTeamContent(parseInt(id))
+  
+  const baseUrl = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3000' 
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+
   return {
-    title: `${team.team.name} - Thông tin & Lịch thi đấu`,
-    description: `Thông tin, thống kê và lịch thi đấu của ${team.team.name}.`,
+    title: teamContent?.title || `${team.team.name} - Thông tin & Lịch thi đấu`,
+    description: teamContent?.excerpt || `Thông tin, thống kê và lịch thi đấu của ${team.team.name}.`,
+    alternates: {
+      canonical: `${baseUrl}/doi-bong/${id}`,
+    },
+    openGraph: {
+      title: teamContent?.title || `${team.team.name} - Thông tin & Lịch thi đấu`,
+      description: teamContent?.excerpt || `Thông tin, thống kê và lịch thi đấu của ${team.team.name}.`,
+      images: [team.team.logo],
+    },
   }
 }
 
@@ -265,12 +285,41 @@ export default async function DoiBongPage(props: PageProps<'/doi-bong/[id]'>) {
 
   return (
     <div className="space-y-4">
-      <BackButton />
+      {/* JSON-LD Team schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ 
+          __html: JSON.stringify(teamJsonLd({
+            id: teamId,
+            name: t.name,
+            logo: t.logo,
+            country: t.country,
+            founded: t.founded ?? undefined,
+          }))
+        }}
+      />
 
-      {/* Nội dung giới thiệu đội bóng */}
-      {teamContent && (
-        <PageContentSection content={teamContent} />
-      )}
+      {/* JSON-LD Breadcrumb */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ 
+          __html: JSON.stringify(breadcrumbJsonLd([
+            { name: 'Trang chủ', url: BASE_URL },
+            { name: 'Đội bóng', url: `${BASE_URL}/doi-bong` },
+            { name: t.name, url: `${BASE_URL}/doi-bong/${id}` },
+          ]))
+        }}
+      />
+
+      <Breadcrumb 
+        items={[
+          { name: 'Đội bóng' },
+          { name: t.name },
+        ]}
+        className="mb-2"
+      />
+
+      <BackButton />
 
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         {/* Header */}
@@ -349,6 +398,11 @@ export default async function DoiBongPage(props: PageProps<'/doi-bong/[id]'>) {
           }
         </Suspense>
       </div>
+
+      {/* Nội dung giới thiệu đội bóng - di chuyển xuống cuối */}
+      {teamContent && (
+        <PageContentSection content={teamContent} />
+      )}
     </div>
   )
 }
