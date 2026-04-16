@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase-middleware'
 
 // Cấu hình chuyển hướng domain
-const DOMAIN_REDIRECTS = {
+const DOMAIN_REDIRECTS: Record<string, string> = {
   // Chuyển hướng từ Netlify domain cũ sang domain mới
   'football-nextjs.netlify.app': 'https://www.techshift.vn',
   // Chuyển hướng non-www sang www
