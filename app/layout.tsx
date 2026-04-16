@@ -26,6 +26,9 @@ export const metadata: Metadata = {
   keywords: ['bongdawap', 'livescore', 'bóng đá', 'kết quả bóng đá', 'bảng xếp hạng', 'nhận định', 'tỷ lệ kèo', 'premier league', 'la liga'],
   authors: [{ name: 'BongDaWap' }],
   creator: 'BongDaWap',
+  verification: {
+    google: 'Vq4mUNKg6nJz3BvJkmpAo0K2c7YUNcC5q8h15bO2IVA',
+  },
   openGraph: {
     type: 'website',
     locale: 'vi_VN',
