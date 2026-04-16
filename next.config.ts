@@ -15,6 +15,51 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  
+  // Cấu hình chuyển hướng
+  async redirects() {
+    return [
+      // Chuyển hướng từ domain cũ sang domain mới
+      // Uncomment và thay đổi domain theo nhu cầu
+      /*
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'old-domain.com', // Thay bằng domain cũ
+          },
+        ],
+        destination: 'https://bongdalive.com/:path*',
+        permanent: true, // 301 redirect
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.old-domain.com', // Thay bằng www.domain-cũ
+          },
+        ],
+        destination: 'https://bongdalive.com/:path*',
+        permanent: true,
+      },
+      */
+      
+      // Chuyển hướng www sang non-www (tùy chọn)
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.bongdalive.com',
+          },
+        ],
+        destination: 'https://bongdalive.com/:path*',
+        permanent: true,
+      },
+    ]
+  },
 };
 
 export default nextConfig;
