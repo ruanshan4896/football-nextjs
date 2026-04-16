@@ -7,14 +7,17 @@
 
 ## 1. Sử dụng Next.js (Đã cấu hình)
 
-### Middleware (middleware.ts) ✅
+### Proxy (proxy.ts) ✅ - Next.js 16+
 - Chuyển hướng `football-nextjs.netlify.app` → `www.techshift.vn`
 - Chuyển hướng `techshift.vn` → `www.techshift.vn` (non-www to www)
 - Chuyển hướng các domain cũ khác nếu có
+- Tích hợp với Supabase authentication cho admin routes
 
 ### Next.js Config (next.config.ts) ✅
 - Cấu hình redirects trong next.config.ts
 - Hỗ trợ chuyển hướng dựa trên hostname
+
+**Lưu ý:** Next.js 16 thay thế `middleware.ts` bằng `proxy.ts`
 
 ## 2. Cấu hình Netlify (Cho domain cũ)
 
