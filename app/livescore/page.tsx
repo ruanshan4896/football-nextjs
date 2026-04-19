@@ -10,14 +10,12 @@ import { websiteJsonLd, organizationJsonLd } from '@/lib/json-ld'
 
 export async function generateMetadata(): Promise<Metadata> {
   const pageContent = await getPageContentByPath('/livescore')
-  
   return {
     title: pageContent?.title || 'Livescore bóng đá trực tiếp',
-    description: pageContent?.excerpt || 'Theo dõi livescore bóng đá trực tiếp, kết qu�?các trận đấu đang diễn ra và sắp diễn ra hôm nay.',
+    description: pageContent?.excerpt || 'Theo dõi livescore bóng đá trực tiếp, kết quả các trận đấu đang diễn ra và sắp diễn ra hôm nay.',
   }
 }
 
-// --- Skeleton ---
 function MatchListSkeleton() {
   return (
     <div className="divide-y divide-gray-50">
@@ -34,7 +32,6 @@ function MatchListSkeleton() {
   )
 }
 
-// --- Live Section (Server Component, fetch t�?Redis) ---
 async function LiveSection() {
   const fixtures = await getLiveMatches()
 
@@ -57,11 +54,9 @@ async function LiveSection() {
   )
 }
 
-// --- Today Fixtures Section (Server Component) ---
 async function TodaySection() {
   const fixtures = await getTodayFixtures()
 
-  // Lọc ra các trận chưa đá (NS) và đã kết thúc (FT, AET, PEN)
   const upcoming = fixtures.filter((f) => f.fixture.status.short === 'NS')
   const finished = fixtures.filter((f) =>
     ['FT', 'AET', 'PEN'].includes(f.fixture.status.short)
@@ -69,7 +64,6 @@ async function TodaySection() {
 
   return (
     <>
-      {/* Sắp diễn ra */}
       {upcoming.length > 0 && (
         <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
           <div className="flex items-center gap-2 bg-blue-700 px-4 py-3">
@@ -81,11 +75,10 @@ async function TodaySection() {
         </div>
       )}
 
-      {/* Kết qu�?hôm nay */}
       {finished.length > 0 && (
         <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
           <div className="flex items-center gap-2 bg-gray-600 px-4 py-3">
-            <h2 className="text-sm font-semibold text-white">Kết qu�?hôm nay</h2>
+            <h2 className="text-sm font-semibold text-white">Kết quả hôm nay</h2>
             <span className="ml-auto text-xs text-gray-300">{finished.length} trận</span>
           </div>
           <FixtureList fixtures={finished} />
@@ -107,33 +100,25 @@ async function TodaySection() {
   )
 }
 
-// --- Page ---
 export default async function LivescorePage() {
-  // Lấy nội dung CMS cho trang livescore
   const pageContent = await getPageContentByPath('/livescore')
 
   return (
     <div className="space-y-4">
-      {/* JSON-LD WebSite schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
       />
-      
-      {/* JSON-LD Organization schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
       />
-      
       <Suspense fallback={<MatchListSkeleton />}>
         <LiveSection />
       </Suspense>
       <Suspense fallback={<MatchListSkeleton />}>
         <TodaySection />
       </Suspense>
-
-      {/* Nội dung CMS - hiển th�?�?cuối trang */}
       {pageContent && (
         <PageContentSection content={pageContent} />
       )}

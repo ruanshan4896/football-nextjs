@@ -15,34 +15,29 @@ import {
   Globe
 } from 'lucide-react'
 import { getLiveMatches } from '@/lib/services/live'
-import { getTodayFixtures } from '@/lib/services/fixtures'
 import { getOddsByLeague } from '@/lib/services/odds'
 import { supabase } from '@/lib/supabase'
-import { formatArticleDate } from '@/lib/date'
 import { websiteJsonLd, organizationJsonLd } from '@/lib/json-ld'
 import MatchRow from '@/components/ui/MatchRow'
 import ArticleCard from '@/components/ui/ArticleCard'
 
 export const metadata: Metadata = {
   title: 'BongDaWap - Cập nhật bóng đá 24/7',
-  description: 'Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam. Livescore trực tiếp, kết qu�? bảng xếp hạng, t�?l�?kèo và nhận định chuyên sâu.',
+  description: 'Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam. Livescore trực tiếp, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định chuyên sâu.',
 }
 
-// Hero Section với branding
+// Hero Section
 function HeroSection() {
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 via-green-700 to-green-800">
-      {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
         <div className="h-full w-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
       </div>
-      
       <div className="relative px-6 py-12 md:px-8 md:py-16">
         <div className="mx-auto max-w-4xl text-center">
-          {/* Logo & Brand */}
           <div className="mb-6 flex items-center justify-center gap-3">
             <div className="rounded-full bg-white/10 p-3 backdrop-blur-sm">
-              <span className="text-3xl">�?/span>
+              <span className="text-3xl">⚽</span>
             </div>
             <div className="text-left">
               <h1 className="text-3xl font-bold text-white md:text-4xl">
@@ -51,16 +46,12 @@ function HeroSection() {
               <p className="text-sm text-green-100">Cập nhật bóng đá 24/7</p>
             </div>
           </div>
-
-          {/* Tagline */}
           <h2 className="mb-4 text-xl font-semibold text-white md:text-2xl">
             Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam
           </h2>
           <p className="mb-8 text-green-100 md:text-lg">
-            Livescore trực tiếp, kết qu�? bảng xếp hạng, t�?l�?kèo và nhận định t�?các chuyên gia hàng đầu
+            Livescore trực tiếp, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định từ các chuyên gia hàng đầu
           </p>
-
-          {/* CTA Buttons */}
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link
               href="/livescore"
@@ -112,7 +103,7 @@ function QuickStats() {
 // Live Matches Preview
 async function LiveMatchesPreview() {
   const fixtures = await getLiveMatches()
-  const displayFixtures = fixtures.slice(0, 3) // Ch�?hiển th�?3 trận
+  const displayFixtures = fixtures.slice(0, 3)
 
   return (
     <div className="rounded-xl bg-white shadow-sm border border-gray-100 overflow-hidden">
@@ -127,10 +118,9 @@ async function LiveMatchesPreview() {
           )}
         </div>
         <Link href="/livescore" className="text-xs text-red-100 hover:text-white">
-          Xem tất c�?�?
+          Xem tất cả →
         </Link>
       </div>
-      
       {displayFixtures.length > 0 ? (
         <div>
           {displayFixtures.map((fixture) => (
@@ -164,10 +154,9 @@ async function FeaturedArticles() {
           <h3 className="font-semibold text-white">Nhận định nổi bật</h3>
         </div>
         <Link href="/nhan-dinh" className="text-xs text-blue-100 hover:text-white">
-          Xem tất c�?�?
+          Xem tất cả →
         </Link>
       </div>
-      
       {articles && articles.length > 0 ? (
         <div className="divide-y divide-gray-100">
           {articles.map((article) => (
@@ -186,7 +175,7 @@ async function FeaturedArticles() {
 // Hot Odds Preview
 async function HotOddsPreview() {
   try {
-    const { odds } = await getOddsByLeague(39, undefined, 1, 8) // Premier League
+    const { odds } = await getOddsByLeague(39, undefined, 1, 8)
     const hotOdds = odds.slice(0, 3)
 
     return (
@@ -197,10 +186,9 @@ async function HotOddsPreview() {
             <h3 className="font-semibold text-white">Kèo hot Premier League</h3>
           </div>
           <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">
-            Xem tất c�?�?
+            Xem tất cả →
           </Link>
         </div>
-        
         {hotOdds.length > 0 ? (
           <div className="p-4 space-y-3">
             {hotOdds.map((odd, i) => (
@@ -217,7 +205,7 @@ async function HotOddsPreview() {
                   href={`/tran-dau/${odd.fixture.id}`}
                   className="text-xs text-orange-600 hover:underline"
                 >
-                  Xem kèo �?
+                  Xem kèo →
                 </Link>
               </div>
             ))}
@@ -238,7 +226,7 @@ async function HotOddsPreview() {
             <h3 className="font-semibold text-white">Kèo hot</h3>
           </div>
           <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">
-            Xem tất c�?�?
+            Xem tất cả →
           </Link>
         </div>
         <div className="px-4 py-8 text-center text-sm text-gray-400">
@@ -255,28 +243,28 @@ function FeaturesGrid() {
     {
       icon: Zap,
       title: 'Cập nhật Real-time',
-      description: 'Livescore và kết qu�?được cập nhật tức thời',
+      description: 'Livescore và kết quả được cập nhật tức thời',
       color: 'bg-yellow-500',
       href: '/livescore'
     },
     {
       icon: BarChart3,
       title: 'Thống kê chi tiết',
-      description: 'Bảng xếp hạng và s�?liệu đầy đ�?,
+      description: 'Bảng xếp hạng và số liệu đầy đủ',
       color: 'bg-blue-500',
       href: '/bang-xep-hang'
     },
     {
       icon: TrendingUp,
-      title: 'T�?l�?kèo chính xác',
-      description: 'Kèo t�?các nhà cái uy tín nhất',
+      title: 'Tỷ lệ kèo chính xác',
+      description: 'Kèo từ các nhà cái uy tín nhất',
       color: 'bg-green-500',
       href: '/ty-le-keo'
     },
     {
       icon: Globe,
       title: 'Giải đấu toàn cầu',
-      description: 'Theo dõi hơn 100 giải đấu trên th�?giới',
+      description: 'Theo dõi hơn 100 giải đấu trên thế giới',
       color: 'bg-purple-500',
       href: '/giai-dau/39'
     }
@@ -309,7 +297,7 @@ function FeaturesGrid() {
   )
 }
 
-// Skeleton components
+// Skeleton
 function ContentSkeleton() {
   return (
     <div className="rounded-xl bg-white shadow-sm border border-gray-100 overflow-hidden">
@@ -323,11 +311,9 @@ function ContentSkeleton() {
   )
 }
 
-// Main Page Component
 export default function HomePage() {
   return (
     <div className="space-y-8">
-      {/* JSON-LD Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
@@ -336,32 +322,19 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
       />
-
-      {/* Hero Section */}
       <HeroSection />
-
-      {/* Quick Stats */}
       <QuickStats />
-
-      {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Live Matches */}
         <Suspense fallback={<ContentSkeleton />}>
           <LiveMatchesPreview />
         </Suspense>
-
-        {/* Featured Articles */}
         <Suspense fallback={<ContentSkeleton />}>
           <FeaturedArticles />
         </Suspense>
       </div>
-
-      {/* Hot Odds */}
       <Suspense fallback={<ContentSkeleton />}>
         <HotOddsPreview />
       </Suspense>
-
-      {/* Features Grid */}
       <div>
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
