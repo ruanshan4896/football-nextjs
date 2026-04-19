@@ -51,7 +51,7 @@ function Scoreboard({ fixture }: { fixture: FixtureDetail }) {
   const isLive = ['1H', '2H', 'HT', 'ET', 'BT', 'P'].includes(f.status.short)
 
   return (
-    <div className={`rounded-xl shadow-sm overflow-hidden ${isLive ? 'bg-green-700' : 'bg-gray-800'}`}>
+    <div className={`rounded-xl shadow-sm overflow-hidden ${isLive ? 'bg-green-700' : 'bg-green-800'}`}>
       {/* League */}
       <div className="flex items-center gap-2 px-4 py-2 bg-black/20">
         <div className="relative h-4 w-4 shrink-0">
@@ -349,12 +349,12 @@ async function OddsSection({ fixtureId }: { fixtureId: number }) {
       <div className="overflow-x-auto">
         <div className="min-w-[320px]">
           {/* Header */}
-          <div className="bg-gray-800 border-b border-gray-600">
+          <div className="bg-blue-600 border-b border-blue-500">
             <div className="flex items-center text-white text-[10px] font-semibold">
               <div className="flex-1 px-4 py-2">Loại kèo</div>
-              <div className="w-16 border-l border-gray-700 text-center py-2">Chấp</div>
-              <div className="w-14 border-l border-gray-700 text-center py-2">T/X</div>
-              <div className="w-12 border-l border-gray-700 text-center py-2">1×2</div>
+              <div className="w-16 border-l border-blue-500 text-center py-2">Chấp</div>
+              <div className="w-14 border-l border-blue-500 text-center py-2">T/X</div>
+              <div className="w-12 border-l border-blue-500 text-center py-2">1×2</div>
             </div>
           </div>
 

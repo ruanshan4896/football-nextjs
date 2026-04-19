@@ -323,7 +323,7 @@ export default async function DoiBongPage(props: PageProps<'/doi-bong/[id]'>) {
 
       <div className="rounded-xl bg-white shadow-sm overflow-hidden">
         {/* Header */}
-        <div className="flex items-center gap-4 bg-gray-800 px-4 py-5">
+        <div className="flex items-center gap-4 bg-green-700 px-4 py-5">
           <div className="relative h-16 w-16 shrink-0">
             <Image src={t.logo} alt={t.name} fill className="object-contain" sizes="64px" />
           </div>

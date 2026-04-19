@@ -169,7 +169,7 @@ export default async function GiaiDauPage(props: PageProps<'/giai-dau/[id]'>) {
 
       {/* Header giải đấu */}
       <div className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-        <div className="flex items-center gap-3 bg-gray-800 px-4 py-4">
+        <div className="flex items-center gap-3 bg-green-700 px-4 py-4">
           <div className="relative h-12 w-12 shrink-0">
             <Image src={league.league.logo} alt={league.league.name} fill className="object-contain" sizes="48px" />
           </div>

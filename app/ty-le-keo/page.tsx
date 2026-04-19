@@ -238,13 +238,13 @@ export default async function TyLeKeoPage(props: PageProps<'/ty-le-keo'>) {
         </div>
 
         {/* Header bảng */}
-        <div className="bg-gray-800 border-b border-gray-600">
+        <div className="bg-blue-600 border-b border-blue-500">
           <div className="flex items-center text-white text-[10px] font-semibold">
             <div className="flex-1 px-3 py-2">Trận đấu</div>
-            <div className="w-16 border-l border-gray-700 text-center py-2">Chấp</div>
-            <div className="w-14 border-l border-gray-700 text-center py-2">T/X</div>
-            <div className="w-12 border-l border-gray-700 text-center py-2">1×2</div>
-            <div className="w-8 border-l border-gray-700"></div>
+            <div className="w-16 border-l border-blue-500 text-center py-2">Chấp</div>
+            <div className="w-14 border-l border-blue-500 text-center py-2">T/X</div>
+            <div className="w-12 border-l border-blue-500 text-center py-2">1×2</div>
+            <div className="w-8 border-l border-blue-500"></div>
           </div>
         </div>
 
