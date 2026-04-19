@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { FileText, Clock, User } from 'lucide-react'
 import { formatArticleDate } from '@/lib/date'
@@ -31,7 +30,8 @@ export default function ArticleCard({ article, variant = 'default' }: Props) {
         {/* Thumbnail nhỏ */}
         <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
           {article.cover_image ? (
-            <Image src={article.cover_image} alt={article.title} fill className="object-cover" sizes="80px" />
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={article.cover_image} alt={article.title} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center">
               <FileText size={18} className="text-gray-300 dark:text-gray-600" />
@@ -61,7 +61,8 @@ export default function ArticleCard({ article, variant = 'default' }: Props) {
       {/* Ảnh bìa */}
       <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
         {article.cover_image ? (
-          <Image src={article.cover_image} alt={article.title} fill className="object-cover" sizes="112px" />
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={article.cover_image} alt={article.title} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center bg-green-50 dark:bg-green-900/20">
             <FileText size={24} className="text-green-300 dark:text-green-600" />

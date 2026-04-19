@@ -80,14 +80,12 @@ export default async function NhanDinhDetailPage(props: PageProps<'/nhan-dinh/[s
       <article className="rounded-xl border border-gray-100 bg-white shadow-sm overflow-hidden">
         {/* Ảnh bìa */}
         {article.cover_image && (
-          <div className="relative h-48 w-full sm:h-64">
-            <Image
+          <div className="relative h-48 w-full sm:h-64 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={article.cover_image}
               alt={article.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 600px"
-              priority
+              className="h-full w-full object-cover"
             />
           </div>
         )}
