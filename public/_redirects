@@ -1,2 +1,0 @@
-# Netlify redirects - chuyển hướng từ domain cũ sang domain mới
-https://football-nextjs.netlify.app/* https://www.techshift.vn/:splat 301!
