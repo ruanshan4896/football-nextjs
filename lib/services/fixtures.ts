@@ -39,6 +39,6 @@ export async function getFixtureDetails(fixtureId: number): Promise<FixtureDetai
 export async function refreshFixturesByDate(date: string): Promise<Fixture[]> {
   const { revalidateTag } = await import('next/cache')
   const fixtures = await fetchFixturesByDate(date)
-  revalidateTag(`fixtures_${date}`)
+  revalidateTag(`fixtures_${date}`, 'max')
   return fixtures
 }

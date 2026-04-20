@@ -14,6 +14,6 @@ export const getLiveMatches = unstable_cache(
 export async function refreshLiveMatches(): Promise<Fixture[]> {
   const { revalidateTag } = await import('next/cache')
   const fixtures = await fetchLiveFixtures()
-  revalidateTag('live_matches')
+  revalidateTag('live_matches', 'max')
   return fixtures
 }

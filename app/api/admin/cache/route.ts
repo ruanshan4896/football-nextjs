@@ -26,18 +26,18 @@ export async function DELETE(request: NextRequest) {
   const invalidated: string[] = []
 
   if (key === 'live' || key === 'all') {
-    revalidateTag('live_matches')
+    revalidateTag('live_matches', 'max')
     invalidated.push('live_matches')
   }
 
   if (key === 'fixtures_today' || key === 'all') {
     const today = getVNDateString(0)
-    revalidateTag(`fixtures_${today}`)
+    revalidateTag(`fixtures_${today}`, 'max')
     invalidated.push(`fixtures_${today}`)
   }
 
   if (key.startsWith('fixtures_') && key !== 'fixtures_today') {
-    revalidateTag(key)
+    revalidateTag(key, 'max')
     invalidated.push(key)
   }
 

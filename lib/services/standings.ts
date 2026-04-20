@@ -29,7 +29,7 @@ export async function refreshStandings(leagueId: number, season?: number): Promi
   const { revalidateTag } = await import('next/cache')
   const resolvedSeason = season ?? TRACKED_LEAGUES.find(l => l.id === leagueId)?.season ?? CURRENT_SEASON
   const standings = await fetchStandings(leagueId, resolvedSeason)
-  revalidateTag(`standings_${leagueId}_${resolvedSeason}`)
+  revalidateTag(`standings_${leagueId}_${resolvedSeason}`, 'max')
   return standings
 }
 
