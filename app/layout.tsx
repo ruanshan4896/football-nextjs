@@ -4,6 +4,7 @@ import Header from '@/components/layout/Header'
 import BottomNav from '@/components/layout/BottomNav'
 import LeftSidebar from '@/components/layout/LeftSidebar'
 import RightSidebar from '@/components/layout/RightSidebar'
+import Footer from '@/components/layout/Footer'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn'
@@ -101,6 +102,7 @@ export default function RootLayout({
            * - Fixed bottom, z-index cao
            */}
           <BottomNav />
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
