@@ -51,8 +51,8 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
   },
 }
 
