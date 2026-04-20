@@ -6,7 +6,7 @@ import LeftSidebar from '@/components/layout/LeftSidebar'
 import RightSidebar from '@/components/layout/RightSidebar'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.bongdawap.com'
 
 export const viewport: Viewport = {
   themeColor: '#15803d',
@@ -18,14 +18,14 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'TechShift - Cập nhật bóng đá 24/7',
-    template: '%s | TechShift',
+    default: 'BongDaWap - Xem bóng đá trực tiếp, livescore 24/7',
+    template: '%s | BongDaWap',
   },
   description:
-    'Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam. Livescore trực tiếp, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định chuyên sâu.',
-  keywords: ['techshift', 'livescore', 'bóng đá', 'kết quả bóng đá', 'bảng xếp hạng', 'nhận định', 'tỷ lệ kèo', 'premier league', 'la liga'],
-  authors: [{ name: 'TechShift' }],
-  creator: 'TechShift',
+    'BongDaWap - Trang xem bóng đá trực tiếp, livescore, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định chuyên sâu từ các chuyên gia hàng đầu.',
+  keywords: ['bongdawap', 'bóng đá trực tiếp', 'livescore', 'kết quả bóng đá', 'bảng xếp hạng', 'nhận định', 'tỷ lệ kèo', 'premier league', 'la liga'],
+  authors: [{ name: 'BongDaWap' }],
+  creator: 'BongDaWap',
   verification: {
     google: 'PLt30fBQlcTM1BKCaUVZwgHS6447VDbjJjcbbedM4qM',
   },
@@ -33,14 +33,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'vi_VN',
     url: BASE_URL,
-    siteName: 'TechShift',
-    title: 'TechShift - Cập nhật bóng đá 24/7',
-    description: 'Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam. Livescore trực tiếp, kết quả, bảng xếp hạng và nhận định chuyên sâu.',
+    siteName: 'BongDaWap',
+    title: 'BongDaWap - Xem bóng đá trực tiếp, livescore 24/7',
+    description: 'BongDaWap - Trang xem bóng đá trực tiếp, livescore, kết quả, bảng xếp hạng và nhận định chuyên sâu.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TechShift',
-    description: 'Cập nhật bóng đá 24/7 - Livescore, kết quả, BXH và nhận định.',
+    title: 'BongDaWap',
+    description: 'BongDaWap - Xem bóng đá trực tiếp 24/7 - Livescore, kết quả, BXH và nhận định.',
   },
   alternates: {
     canonical: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : BASE_URL,
