@@ -6,7 +6,7 @@ import LeftSidebar from '@/components/layout/LeftSidebar'
 import RightSidebar from '@/components/layout/RightSidebar'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.bongdawap.com'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn'
 
 export const viewport: Viewport = {
   themeColor: '#15803d',
