@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import './globals.css'
 import Header from '@/components/layout/Header'
 import BottomNav from '@/components/layout/BottomNav'
@@ -65,6 +66,21 @@ export default function RootLayout({
   return (
     <html lang="vi" className="h-full">
       <body className="min-h-full bg-gray-100 antialiased">
+        {/* Google News / Subscribe with Google */}
+        <Script
+          src="https://news.google.com/swg/js/v1/swg-basic.js"
+          strategy="afterInteractive"
+        />
+        <Script id="swg-basic-init" strategy="afterInteractive">{`
+          (self.SWG_BASIC = self.SWG_BASIC || []).push(basicSubscriptions => {
+            basicSubscriptions.init({
+              type: "NewsArticle",
+              isPartOfType: ["Product"],
+              isPartOfProductId: "CAow26PGDA:openaccess",
+              clientOptions: { theme: "light", lang: "vi" },
+            });
+          });
+        `}</Script>
         <ThemeProvider>
           {/* Header - sticky top */}
           <Header />
