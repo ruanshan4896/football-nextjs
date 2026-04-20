@@ -37,6 +37,9 @@ export default function Header() {
           <Link href="/nhan-dinh" className="hover:text-yellow-300 transition-colors">
             Nhận định
           </Link>
+          <Link href="/tin-tuc" className="hover:text-yellow-300 transition-colors">
+            Tin tức
+          </Link>
           <Link href="/ty-le-keo" className="hover:text-yellow-300 transition-colors">
             Tỷ lệ kèo
           </Link>

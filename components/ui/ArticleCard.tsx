@@ -17,14 +17,17 @@ interface Article {
 interface Props {
   article: Article
   variant?: 'default' | 'compact'
+  basePath?: string // default: '/nhan-dinh'
 }
 
 // Server Component — dùng chung ở trang nhận định, trang giải đấu
-export default function ArticleCard({ article, variant = 'default' }: Props) {
+export default function ArticleCard({ article, variant = 'default', basePath = '/nhan-dinh' }: Props) {
+  const href = `${basePath}/${article.slug}`
+
   if (variant === 'compact') {
     return (
       <Link
-        href={`/nhan-dinh/${article.slug}`}
+        href={href}
         className="flex gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
       >
         {/* Thumbnail nhỏ */}
@@ -55,7 +58,7 @@ export default function ArticleCard({ article, variant = 'default' }: Props) {
 
   return (
     <Link
-      href={`/nhan-dinh/${article.slug}`}
+      href={href}
       className="flex gap-3 p-4 hover:bg-gray-50 transition-colors"
     >
       {/* Ảnh bìa */}

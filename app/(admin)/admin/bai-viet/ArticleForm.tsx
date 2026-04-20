@@ -16,7 +16,7 @@ interface ArticleFormData {
   league_id: string
   author: string
   status: 'draft' | 'published'
-  content_type: 'article' | 'page_content'
+  content_type: 'article' | 'page_content' | 'news'
   page_type: 'league_intro' | 'team_intro' | 'odds_guide' | 'standings_guide' | 'fixtures_guide' | 'general' | ''
   page_path: string
 }
@@ -135,17 +135,18 @@ export default function ArticleForm({ initialData }: Props) {
           <select
             value={form.content_type}
             onChange={(e) => {
-              const newType = e.target.value as 'article' | 'page_content'
+              const newType = e.target.value as 'article' | 'page_content' | 'news'
               setForm((f) => ({ 
                 ...f, 
                 content_type: newType,
-                page_type: newType === 'article' ? '' : 'general',
-                page_path: newType === 'article' ? '' : f.page_path
+                page_type: newType === 'article' || newType === 'news' ? '' : 'general',
+                page_path: newType === 'article' || newType === 'news' ? '' : f.page_path
               }))
             }}
             className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
           >
-            <option value="article">Bài viết</option>
+            <option value="article">Bài viết (Nhận định)</option>
+            <option value="news">Tin tức</option>
             <option value="page_content">Nội dung trang</option>
           </select>
         </div>
