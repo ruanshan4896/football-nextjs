@@ -2,17 +2,17 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { 
-  Activity, 
-  Calendar, 
-  TrendingUp, 
-  Trophy, 
-  Users, 
+import {
+  Activity,
+  Calendar,
+  TrendingUp,
+  Trophy,
+  Users,
   BarChart3,
   ArrowRight,
   Star,
   Zap,
-  Globe
+  Globe,
 } from 'lucide-react'
 import { getLiveMatches } from '@/lib/services/live'
 import { getOddsByLeague } from '@/lib/services/odds'
@@ -23,8 +23,8 @@ import ArticleCard from '@/components/ui/ArticleCard'
 import NewsCarousel from '@/components/ui/NewsCarousel'
 
 export const metadata: Metadata = {
-  title: 'BongDaWap - Cập nhật bóng đá 24/7',
-  description: 'Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam. Livescore trực tiếp, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định chuyên sâu.',
+  title: 'BongDaWap - Xem bóng đá trực tiếp, livescore, tỷ lệ kèo',
+  description: 'BongDaWap - Trang xem bóng đá trực tiếp, livescore, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định chuyên sâu từ các chuyên gia hàng đầu.',
 }
 
 // Hero Section
@@ -34,25 +34,30 @@ function HeroSection() {
       <div className="absolute inset-0 opacity-20">
         <div className="h-full w-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
       </div>
-      <div className="relative px-6 py-12 md:px-8 md:py-16">
+      <div className="relative px-6 py-10 md:px-8 md:py-14">
         <div className="mx-auto max-w-4xl text-center">
-          <div className="mb-6 flex items-center justify-center gap-3">
-            <div className="rounded-full bg-white/10 p-3 backdrop-blur-sm">
-              <span className="text-3xl">⚽</span>
-            </div>
-            <div className="text-left">
-              <h1 className="text-3xl font-bold text-white md:text-4xl">
-                BongDa<span className="text-yellow-300">Wap</span>
-              </h1>
-              <p className="text-sm text-green-100">Cập nhật bóng đá 24/7</p>
-            </div>
+          {/* Logo */}
+          <div className="mb-6 flex justify-center">
+            <Image
+              src="/bongdawap-logo-techshift.png"
+              alt="BongDaWap - Xem bóng đá trực tiếp"
+              width={400}
+              height={100}
+              className="h-16 w-auto object-contain"
+              priority
+            />
           </div>
-          <h2 className="mb-4 text-xl font-semibold text-white md:text-2xl">
-            Nơi cập nhật tin tức bóng đá nhanh nhất Việt Nam
+
+          {/* H1 - tối ưu SEO cho từ khóa BongDaWap */}
+          <h1 className="mb-3 text-2xl font-bold text-white md:text-3xl">
+            BongDaWap – Xem Bóng Đá Trực Tiếp, Livescore 24/7
+          </h1>
+
+          {/* H2 */}
+          <h2 className="mb-6 text-base text-green-100 md:text-lg">
+            Cập nhật livescore nhanh nhất, tỷ lệ kèo chính xác, nhận định chuyên sâu từ BongDaWap
           </h2>
-          <p className="mb-8 text-green-100 md:text-lg">
-            Livescore trực tiếp, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định từ các chuyên gia hàng đầu
-          </p>
+
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link
               href="/livescore"
@@ -118,20 +123,12 @@ async function LiveMatchesPreview() {
             </span>
           )}
         </div>
-        <Link href="/livescore" className="text-xs text-red-100 hover:text-white">
-          Xem tất cả →
-        </Link>
+        <Link href="/livescore" className="text-xs text-red-100 hover:text-white">Xem tất cả →</Link>
       </div>
       {displayFixtures.length > 0 ? (
-        <div>
-          {displayFixtures.map((fixture) => (
-            <MatchRow key={fixture.fixture.id} fixture={fixture} />
-          ))}
-        </div>
+        <div>{displayFixtures.map((f) => <MatchRow key={f.fixture.id} fixture={f} />)}</div>
       ) : (
-        <div className="px-4 py-8 text-center text-sm text-gray-400">
-          Hiện không có trận nào đang diễn ra
-        </div>
+        <div className="px-4 py-8 text-center text-sm text-gray-400">Hiện không có trận nào đang diễn ra</div>
       )}
     </div>
   )
@@ -154,20 +151,14 @@ async function FeaturedArticles() {
           <Star size={16} className="text-white" />
           <h3 className="font-semibold text-white">Nhận định nổi bật</h3>
         </div>
-        <Link href="/nhan-dinh" className="text-xs text-blue-100 hover:text-white">
-          Xem tất cả →
-        </Link>
+        <Link href="/nhan-dinh" className="text-xs text-blue-100 hover:text-white">Xem tất cả →</Link>
       </div>
       {articles && articles.length > 0 ? (
         <div className="divide-y divide-gray-100">
-          {articles.map((article) => (
-            <ArticleCard key={article.id} article={article} variant="compact" />
-          ))}
+          {articles.map((a) => <ArticleCard key={a.id} article={a} variant="compact" />)}
         </div>
       ) : (
-        <div className="px-4 py-8 text-center text-sm text-gray-400">
-          Chưa có bài viết nào
-        </div>
+        <div className="px-4 py-8 text-center text-sm text-gray-400">Chưa có bài viết nào</div>
       )}
     </div>
   )
@@ -186,35 +177,22 @@ async function HotOddsPreview() {
             <TrendingUp size={16} className="text-white" />
             <h3 className="font-semibold text-white">Kèo hot Premier League</h3>
           </div>
-          <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">
-            Xem tất cả →
-          </Link>
+          <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">Xem tất cả →</Link>
         </div>
         {hotOdds.length > 0 ? (
           <div className="p-4 space-y-3">
             {hotOdds.map((odd, i) => (
               <div key={odd.fixture.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">
-                    Trận #{i + 1}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(odd.fixture.date).toLocaleDateString('vi-VN')}
-                  </p>
+                  <p className="text-sm font-medium text-gray-900">Trận #{i + 1}</p>
+                  <p className="text-xs text-gray-500">{new Date(odd.fixture.date).toLocaleDateString('vi-VN')}</p>
                 </div>
-                <Link
-                  href={`/tran-dau/${odd.fixture.id}`}
-                  className="text-xs text-orange-600 hover:underline"
-                >
-                  Xem kèo →
-                </Link>
+                <Link href={`/tran-dau/${odd.fixture.id}`} className="text-xs text-orange-600 hover:underline">Xem kèo →</Link>
               </div>
             ))}
           </div>
         ) : (
-          <div className="px-4 py-8 text-center text-sm text-gray-400">
-            Đang cập nhật kèo...
-          </div>
+          <div className="px-4 py-8 text-center text-sm text-gray-400">Đang cập nhật kèo...</div>
         )}
       </div>
     )
@@ -226,76 +204,12 @@ async function HotOddsPreview() {
             <TrendingUp size={16} className="text-white" />
             <h3 className="font-semibold text-white">Kèo hot</h3>
           </div>
-          <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">
-            Xem tất cả →
-          </Link>
+          <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">Xem tất cả →</Link>
         </div>
-        <div className="px-4 py-8 text-center text-sm text-gray-400">
-          Đang cập nhật...
-        </div>
+        <div className="px-4 py-8 text-center text-sm text-gray-400">Đang cập nhật...</div>
       </div>
     )
   }
-}
-
-// Skeleton
-function ContentSkeleton() {
-  const features = [
-    {
-      icon: Zap,
-      title: 'Cập nhật Real-time',
-      description: 'Livescore và kết quả được cập nhật tức thời',
-      color: 'bg-yellow-500',
-      href: '/livescore'
-    },
-    {
-      icon: BarChart3,
-      title: 'Thống kê chi tiết',
-      description: 'Bảng xếp hạng và số liệu đầy đủ',
-      color: 'bg-blue-500',
-      href: '/bang-xep-hang'
-    },
-    {
-      icon: TrendingUp,
-      title: 'Tỷ lệ kèo chính xác',
-      description: 'Kèo từ các nhà cái uy tín nhất',
-      color: 'bg-green-500',
-      href: '/ty-le-keo'
-    },
-    {
-      icon: Globe,
-      title: 'Giải đấu toàn cầu',
-      description: 'Theo dõi hơn 100 giải đấu trên thế giới',
-      color: 'bg-purple-500',
-      href: '/giai-dau/39'
-    }
-  ]
-
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {features.map((feature, i) => (
-        <Link
-          key={i}
-          href={feature.href}
-          className="group rounded-xl bg-white p-6 shadow-sm border border-gray-100 transition-all hover:shadow-md hover:scale-105"
-        >
-          <div className={`inline-flex rounded-lg ${feature.color} p-3 text-white mb-4`}>
-            <feature.icon size={24} />
-          </div>
-          <h3 className="font-semibold text-gray-900 mb-2">
-            {feature.title}
-          </h3>
-          <p className="text-sm text-gray-600 mb-3">
-            {feature.description}
-          </p>
-          <div className="flex items-center text-sm font-medium text-green-600 group-hover:gap-2 transition-all">
-            Khám phá
-            <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-      ))}
-    </div>
-  )
 }
 
 // News Section
@@ -314,16 +228,42 @@ async function NewsSection() {
     <div className="rounded-xl bg-white shadow-sm overflow-hidden">
       <div className="flex items-center justify-between bg-blue-700 px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-white text-sm">📰</span>
+          <span className="text-white">📰</span>
           <h3 className="font-semibold text-white text-sm">Tin tức mới nhất</h3>
         </div>
-        <Link href="/tin-tuc" className="text-xs text-blue-100 hover:text-white">
-          Xem tất cả →
-        </Link>
+        <Link href="/tin-tuc" className="text-xs text-blue-100 hover:text-white">Xem tất cả →</Link>
       </div>
       <div className="p-3">
         <NewsCarousel news={news} />
       </div>
+    </div>
+  )
+}
+
+// Features Grid
+function FeaturesGrid() {
+  const features = [
+    { icon: Zap, title: 'Cập nhật Real-time', description: 'Livescore và kết quả được cập nhật tức thời', color: 'bg-yellow-500', href: '/livescore' },
+    { icon: BarChart3, title: 'Thống kê chi tiết', description: 'Bảng xếp hạng và số liệu đầy đủ', color: 'bg-blue-500', href: '/bang-xep-hang' },
+    { icon: TrendingUp, title: 'Tỷ lệ kèo chính xác', description: 'Kèo từ các nhà cái uy tín nhất', color: 'bg-green-500', href: '/ty-le-keo' },
+    { icon: Globe, title: 'Giải đấu toàn cầu', description: 'Theo dõi hơn 100 giải đấu trên thế giới', color: 'bg-purple-500', href: '/giai-dau/39' },
+  ]
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {features.map((feature, i) => (
+        <Link key={i} href={feature.href} className="group rounded-xl bg-white p-6 shadow-sm border border-gray-100 transition-all hover:shadow-md hover:scale-105">
+          <div className={`inline-flex rounded-lg ${feature.color} p-3 text-white mb-4`}>
+            <feature.icon size={24} />
+          </div>
+          <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
+          <p className="text-sm text-gray-600 mb-3">{feature.description}</p>
+          <div className="flex items-center text-sm font-medium text-green-600 group-hover:gap-2 transition-all">
+            Khám phá
+            <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+      ))}
     </div>
   )
 }
@@ -345,16 +285,12 @@ function ContentSkeleton() {
 export default function HomePage() {
   return (
     <div className="space-y-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }} />
+
       <HeroSection />
       <QuickStats />
+
       <div className="grid gap-6 lg:grid-cols-2">
         <Suspense fallback={<ContentSkeleton />}>
           <LiveMatchesPreview />
@@ -363,20 +299,20 @@ export default function HomePage() {
           <FeaturedArticles />
         </Suspense>
       </div>
+
       <Suspense fallback={<ContentSkeleton />}>
         <HotOddsPreview />
       </Suspense>
+
+      {/* Tin tức carousel */}
       <Suspense fallback={<ContentSkeleton />}>
         <NewsSection />
       </Suspense>
+
       <div>
         <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Tính năng nổi bật
-          </h2>
-          <p className="text-gray-600">
-            Khám phá những tính năng tuyệt vời của BongDaWap
-          </p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Tính năng nổi bật</h2>
+          <p className="text-gray-600">Khám phá những tính năng tuyệt vời của BongDaWap</p>
         </div>
         <FeaturesGrid />
       </div>
