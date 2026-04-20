@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { redis, CACHE_KEYS } from '@/lib/redis'
 import { getVNDateString } from '@/lib/date'
 
 async function getAuthUser() {
@@ -16,33 +16,30 @@ async function getAuthUser() {
 }
 
 /**
- * DELETE /api/admin/cache?key=live|fixtures_today|fixtures_YYYY-MM-DD|all
- * Xóa cache Redis thủ công — dùng khi data bị stale
+ * DELETE /api/admin/cache?key=live|fixtures_today|all
  */
 export async function DELETE(request: NextRequest) {
   const user = await getAuthUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   const key = request.nextUrl.searchParams.get('key') ?? 'all'
-  const deleted: string[] = []
+  const invalidated: string[] = []
 
   if (key === 'live' || key === 'all') {
-    await redis.del(CACHE_KEYS.LIVE_MATCHES)
-    deleted.push(CACHE_KEYS.LIVE_MATCHES)
+    revalidateTag('live_matches')
+    invalidated.push('live_matches')
   }
 
   if (key === 'fixtures_today' || key === 'all') {
     const today = getVNDateString(0)
-    const cacheKey = CACHE_KEYS.FIXTURES(today)
-    await redis.del(cacheKey)
-    deleted.push(cacheKey)
+    revalidateTag(`fixtures_${today}`)
+    invalidated.push(`fixtures_${today}`)
   }
 
-  // Xóa cache ngày cụ thể: key=fixtures_2025-04-15
   if (key.startsWith('fixtures_') && key !== 'fixtures_today') {
-    await redis.del(key)
-    deleted.push(key)
+    revalidateTag(key)
+    invalidated.push(key)
   }
 
-  return Response.json({ success: true, deleted })
+  return Response.json({ success: true, invalidated })
 }
