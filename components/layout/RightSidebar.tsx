@@ -42,18 +42,27 @@ async function HotNews() {
   )
 }
 
-// Kèo nổi bật — lấy 3 trận Premier League
+// Kèo nổi bật — lấy từ nhiều giải đấu
 async function FeaturedOdds() {
   try {
-    const { odds } = await getOddsByLeague(39, undefined, 1, 8) // Premier League, Bet365
-    const featured = odds.slice(0, 3)
+    const { fetchFixtureById } = await import('@/lib/api-football')
+
+    // Lấy kèo từ 4 giải phổ biến, mỗi giải 1 trận
+    const leagueIds = [39, 140, 135, 78] // PL, La Liga, Serie A, Bundesliga
+    const allOdds = await Promise.all(
+      leagueIds.map(id => getOddsByLeague(id, undefined, 1, 8).catch(() => ({ odds: [] })))
+    )
+
+    // Lấy 1 trận đầu tiên từ mỗi giải, tổng tối đa 4 trận
+    const featured = allOdds
+      .map(r => r.odds[0])
+      .filter(Boolean)
+      .slice(0, 4)
 
     if (featured.length === 0) {
       return <div className="px-4 py-4 text-xs text-gray-400 text-center">Chưa có kèo</div>
     }
 
-    // Fetch fixture details để lấy tên đội và logo
-    const { fetchFixtureById } = await import('@/lib/api-football')
     const fixtures = await Promise.all(featured.map(o => fetchFixtureById(o.fixture.id)))
 
     return (

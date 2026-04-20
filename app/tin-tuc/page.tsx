@@ -10,13 +10,15 @@ export const metadata: Metadata = {
 }
 
 export default async function TinTucPage() {
-  const { data: articles } = await supabase
+  const { data: articles, error } = await supabase
     .from('articles')
     .select('id, title, slug, excerpt, cover_image, author, published_at, match_id, league_id')
     .eq('status', 'published')
     .eq('content_type', 'news')
     .order('published_at', { ascending: false })
     .limit(20)
+
+  console.log('Tin tức query:', { count: articles?.length, error })
 
   return (
     <div className="rounded-xl bg-white shadow-sm overflow-hidden">
