@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { Newspaper, TrendingUp } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase-server'
 import { getOddsByLeague, getMatchWinner, getAsianHandicap, getOverUnder } from '@/lib/services/odds'
 import { formatArticleDate } from '@/lib/date'
 import OddsCompactRow from '@/components/ui/OddsCompactRow'
 
-// Tin HOT từ Supabase
+// Tin HOT từ Supabase (nhận định)
 async function HotNews() {
   const { data: articles } = await supabase
     .from('articles')
@@ -35,6 +36,43 @@ async function HotNews() {
       </ul>
       <div className="px-4 py-2 border-t border-gray-100">
         <Link href="/nhan-dinh" className="text-xs font-medium text-green-700 hover:underline">
+          Xem tất cả →
+        </Link>
+      </div>
+    </>
+  )
+}
+
+// Tin tức mới nhất
+async function HotNewsLatest() {
+  const { data: news } = await supabaseAdmin
+    .from('articles')
+    .select('id, title, slug, published_at')
+    .eq('status', 'published')
+    .eq('content_type', 'news')
+    .order('published_at', { ascending: false })
+    .limit(5)
+
+  if (!news || news.length === 0) {
+    return (
+      <div className="px-4 py-4 text-xs text-gray-400 text-center">Chưa có tin tức</div>
+    )
+  }
+
+  return (
+    <>
+      <ul className="divide-y divide-gray-50">
+        {news.map((a) => (
+          <li key={a.id}>
+            <Link href={`/tin-tuc/${a.slug}`} className="block px-4 py-3 hover:bg-blue-50 transition-colors">
+              <p className="text-sm font-medium text-gray-800 line-clamp-2 leading-snug">{a.title}</p>
+              <p className="mt-1 text-xs text-gray-400">{formatArticleDate(a.published_at)}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <div className="px-4 py-2 border-t border-gray-100">
+        <Link href="/tin-tuc" className="text-xs font-medium text-blue-700 hover:underline">
           Xem tất cả →
         </Link>
       </div>
@@ -133,6 +171,15 @@ export default function RightSidebar() {
             <h2 className="text-sm font-semibold text-white">Nhận định gần đây</h2>
           </div>
           <HotNews />
+        </div>
+
+        {/* Tin tức mới nhất */}
+        <div className="rounded-xl bg-white shadow-sm overflow-hidden">
+          <div className="flex items-center gap-2 bg-blue-700 px-4 py-3">
+            <Newspaper size={14} className="text-white" />
+            <h2 className="text-sm font-semibold text-white">Tin tức mới nhất</h2>
+          </div>
+          <HotNewsLatest />
         </div>
 
         {/* Kèo nổi bật */}
