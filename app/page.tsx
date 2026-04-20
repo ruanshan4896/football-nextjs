@@ -17,6 +17,7 @@ import {
 import { getLiveMatches } from '@/lib/services/live'
 import { getOddsByLeague } from '@/lib/services/odds'
 import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase-server'
 import { websiteJsonLd, organizationJsonLd } from '@/lib/json-ld'
 import MatchRow from '@/components/ui/MatchRow'
 import ArticleCard from '@/components/ui/ArticleCard'
@@ -214,7 +215,7 @@ async function HotOddsPreview() {
 
 // News Section
 async function NewsSection() {
-  const { data: news } = await supabase
+  const { data: news } = await supabaseAdmin
     .from('articles')
     .select('id, title, slug, excerpt, cover_image, author, published_at')
     .eq('status', 'published')

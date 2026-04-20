@@ -7,6 +7,8 @@ import { getWorldCupGroups, WORLD_CUP_SEASON } from '@/lib/services/worldcup'
 import { organizationJsonLd, breadcrumbJsonLd } from '@/lib/json-ld'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 
+export const dynamic = 'force-dynamic'
+
 const BASE_URL = process.env.NODE_ENV === 'development' 
   ? 'http://localhost:3000' 
   : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')

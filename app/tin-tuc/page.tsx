@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { Newspaper } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase-server'
 import ArticleCard from '@/components/ui/ArticleCard'
 
 export const metadata: Metadata = {
@@ -10,7 +9,7 @@ export const metadata: Metadata = {
 }
 
 export default async function TinTucPage() {
-  const { data: articles, error } = await supabase
+  const { data: articles, error } = await supabaseAdmin
     .from('articles')
     .select('id, title, slug, excerpt, cover_image, author, published_at, match_id, league_id')
     .eq('status', 'published')
@@ -18,7 +17,7 @@ export default async function TinTucPage() {
     .order('published_at', { ascending: false })
     .limit(20)
 
-  console.log('Tin tức query:', { count: articles?.length, error })
+  if (error) console.error('Tin tức error:', error)
 
   return (
     <div className="rounded-xl bg-white shadow-sm overflow-hidden">

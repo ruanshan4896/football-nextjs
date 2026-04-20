@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation'
 import { Trophy, Calendar, ArrowLeft } from 'lucide-react'
 import { getWorldCupGroup, getWorldCupFixturesByGroup } from '@/lib/services/worldcup'
 import { breadcrumbJsonLd } from '@/lib/json-ld'
+
+export const dynamic = 'force-dynamic'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import FixtureList from '@/components/ui/FixtureList'
 
