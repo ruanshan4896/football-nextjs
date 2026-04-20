@@ -8,16 +8,15 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full bg-green-700 text-white shadow-md">
       <div className="mx-auto flex h-14 max-w-screen-xl items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+        <Link href="/" className="flex items-center">
           <Image
             src="/bongdawap-logo-techshift.png"
-            alt="BongDaWap Logo"
-            width={32}
-            height={32}
-            className="rounded-md"
+            alt="BongDaWap"
+            width={160}
+            height={40}
+            className="h-9 w-auto object-contain"
+            priority
           />
-          <span className="hidden sm:inline">BongDa<span className="text-yellow-400">Wap</span></span>
-          <span className="sm:hidden">BD<span className="text-yellow-400">W</span></span>
         </Link>
 
         {/* Desktop Nav */}
