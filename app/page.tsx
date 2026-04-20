@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+﻿import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -23,6 +23,8 @@ import MatchRow from '@/components/ui/MatchRow'
 import ArticleCard from '@/components/ui/ArticleCard'
 import NewsCarousel from '@/components/ui/NewsCarousel'
 
+
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: 'BongDaWap - Xem bóng đá trực tiếp, livescore, tỷ lệ kèo',
   description: 'BongDaWap - Trang xem bóng đá trực tiếp, livescore, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định chuyên sâu từ các chuyên gia hàng đầu.',

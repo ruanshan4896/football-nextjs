@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+﻿import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Activity, Calendar } from 'lucide-react'
 import FixtureList from '@/components/ui/FixtureList'
@@ -8,6 +8,8 @@ import { getTodayFixtures } from '@/lib/services/fixtures'
 import { getPageContentByPath } from '@/lib/services/content'
 import { websiteJsonLd, organizationJsonLd } from '@/lib/json-ld'
 
+
+export const dynamic = 'force-dynamic'
 export async function generateMetadata(): Promise<Metadata> {
   const pageContent = await getPageContentByPath('/livescore')
   return {

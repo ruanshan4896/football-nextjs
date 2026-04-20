@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FileText } from 'lucide-react'
@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase'
 import ArticleCard from '@/components/ui/ArticleCard'
 import { TRACKED_LEAGUES } from '@/lib/services/standings'
 
+
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: 'Nhận định & Dự đoán bóng đá',
   description: 'Nhận định, phân tích chuyên sâu và dự đoán kết quả các trận đấu bóng đá.',

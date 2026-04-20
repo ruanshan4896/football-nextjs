@@ -1,8 +1,10 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Newspaper } from 'lucide-react'
 import { supabaseAdmin } from '@/lib/supabase-server'
 import ArticleCard from '@/components/ui/ArticleCard'
 
+
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: 'Tin tức bóng đá',
   description: 'Tin tức bóng đá mới nhất, cập nhật nhanh nhất từ các giải đấu hàng đầu thế giới.',

@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+﻿import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -17,6 +17,8 @@ import { OddsMatchRow } from './OddsMatchRow'
 import PageContentSection from '@/components/ui/PageContent'
 import { getPageContent, getCurrentPageContent } from '@/lib/services/content'
 
+
+export const dynamic = 'force-dynamic'
 export async function generateMetadata(props: PageProps<'/ty-le-keo'>): Promise<Metadata> {
   const searchParams = await props.searchParams ?? {}
   

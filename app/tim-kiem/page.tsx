@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+﻿import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -7,6 +7,8 @@ import { searchAll, getSearchSuggestions, type SearchResult } from '@/lib/servic
 import { breadcrumbJsonLd } from '@/lib/json-ld'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 
+
+export const dynamic = 'force-dynamic'
 const BASE_URL = process.env.NODE_ENV === 'development' 
   ? 'http://localhost:3000' 
   : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')

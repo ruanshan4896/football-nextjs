@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+﻿import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BarChart2 } from 'lucide-react'
@@ -7,6 +7,8 @@ import StandingsTable from '@/components/ui/StandingsTable'
 import PageContentSection from '@/components/ui/PageContent'
 import { getPageContent, getCurrentPageContent } from '@/lib/services/content'
 
+
+export const dynamic = 'force-dynamic'
 export async function generateMetadata(props: PageProps<'/bang-xep-hang'>): Promise<Metadata> {
   const searchParams = await props.searchParams ?? {}
   

@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+﻿import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
@@ -8,6 +8,8 @@ import { getVNDateString, formatShortDate } from '@/lib/date'
 import PageContentSection from '@/components/ui/PageContent'
 import { getPageContent, getCurrentPageContent } from '@/lib/services/content'
 
+
+export const dynamic = 'force-dynamic'
 export async function generateMetadata(props: PageProps<'/lich-thi-dau'>): Promise<Metadata> {
   const searchParams = await props.searchParams ?? {}
   
