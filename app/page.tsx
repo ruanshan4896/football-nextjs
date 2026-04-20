@@ -20,6 +20,7 @@ import { supabase } from '@/lib/supabase'
 import { websiteJsonLd, organizationJsonLd } from '@/lib/json-ld'
 import MatchRow from '@/components/ui/MatchRow'
 import ArticleCard from '@/components/ui/ArticleCard'
+import NewsCarousel from '@/components/ui/NewsCarousel'
 
 export const metadata: Metadata = {
   title: 'BongDaWap - Cập nhật bóng đá 24/7',
@@ -237,8 +238,8 @@ async function HotOddsPreview() {
   }
 }
 
-// Features Grid
-function FeaturesGrid() {
+// Skeleton
+function ContentSkeleton() {
   const features = [
     {
       icon: Zap,
@@ -297,6 +298,36 @@ function FeaturesGrid() {
   )
 }
 
+// News Section
+async function NewsSection() {
+  const { data: news } = await supabase
+    .from('articles')
+    .select('id, title, slug, excerpt, cover_image, author, published_at')
+    .eq('status', 'published')
+    .eq('content_type', 'news')
+    .order('published_at', { ascending: false })
+    .limit(10)
+
+  if (!news || news.length === 0) return null
+
+  return (
+    <div className="rounded-xl bg-white shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between bg-blue-700 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <span className="text-white text-sm">📰</span>
+          <h3 className="font-semibold text-white text-sm">Tin tức mới nhất</h3>
+        </div>
+        <Link href="/tin-tuc" className="text-xs text-blue-100 hover:text-white">
+          Xem tất cả →
+        </Link>
+      </div>
+      <div className="p-3">
+        <NewsCarousel news={news} />
+      </div>
+    </div>
+  )
+}
+
 // Skeleton
 function ContentSkeleton() {
   return (
@@ -334,6 +365,9 @@ export default function HomePage() {
       </div>
       <Suspense fallback={<ContentSkeleton />}>
         <HotOddsPreview />
+      </Suspense>
+      <Suspense fallback={<ContentSkeleton />}>
+        <NewsSection />
       </Suspense>
       <div>
         <div className="mb-6 text-center">
