@@ -8,16 +8,17 @@ export const contentType = 'image/png'
 export default async function Image(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params
 
-  const { data: article } = await supabase
-    .from('articles')
-    .select('title, author')
-    .eq('slug', slug)
-    .single()
+  try {
+    const { data: article } = await supabase
+      .from('articles')
+      .select('title, author')
+      .eq('slug', slug)
+      .single()
 
-  const title = article?.title ?? 'Nhận định bóng đá'
-  const author = article?.author ?? 'BóngĐá Live'
+    const title = article?.title ?? 'Nhận định bóng đá'
+    const author = article?.author ?? 'BóngĐá Live'
 
-  return new ImageResponse(
+    return new ImageResponse(
     (
       <div
         style={{
@@ -70,4 +71,14 @@ export default async function Image(props: { params: Promise<{ slug: string }> }
     ),
     size
   )
+  } catch {
+    return new ImageResponse(
+      (
+        <div style={{ background: '#15803d', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: 72, fontWeight: 800, color: 'white' }}>⚽ BóngĐá Live</div>
+        </div>
+      ),
+      size
+    )
+  }
 }
