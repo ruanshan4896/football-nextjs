@@ -11,7 +11,6 @@ const HOT_LEAGUES = [
   { id: 2,   name: 'Champions League', country: 'UEFA',     logo: 'https://media.api-sports.io/football/leagues/2.png' },
   { id: 3,   name: 'Europa League',    country: 'UEFA',     logo: 'https://media.api-sports.io/football/leagues/3.png' },
   { id: 1,   name: 'World Cup 2026',   country: 'FIFA',     logo: 'https://media.api-sports.io/football/leagues/1.png' },
-  { id: 4,   name: 'Euro 2024',        country: 'UEFA',     logo: 'https://media.api-sports.io/football/leagues/4.png' },
   { id: 340, name: 'V.League 1',       country: 'Vietnam',  logo: 'https://media.api-sports.io/football/leagues/340.png' },
 ]
 
