@@ -51,7 +51,7 @@ export default function Footer() {
               <a
                 href="https://facebook.com"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer nofollow"
                 aria-label="Facebook"
                 className="rounded-full bg-gray-700 p-2 hover:bg-green-700 transition-colors"
               >
@@ -63,7 +63,7 @@ export default function Footer() {
               <a
                 href="https://youtube.com"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer nofollow"
                 aria-label="YouTube"
                 className="rounded-full bg-gray-700 p-2 hover:bg-green-700 transition-colors"
               >
@@ -76,7 +76,7 @@ export default function Footer() {
               <a
                 href="https://twitter.com"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer nofollow"
                 aria-label="Twitter / X"
                 className="rounded-full bg-gray-700 p-2 hover:bg-green-700 transition-colors"
               >
