@@ -12,9 +12,13 @@ import { websiteJsonLd, organizationJsonLd } from '@/lib/json-ld'
 export const dynamic = 'force-dynamic'
 export async function generateMetadata(): Promise<Metadata> {
   const pageContent = await getPageContentByPath('/livescore')
+  const baseUrl = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')
   return {
     title: pageContent?.title || 'Livescore bóng đá trực tiếp',
     description: pageContent?.excerpt || 'Theo dõi livescore bóng đá trực tiếp, kết quả các trận đấu đang diễn ra và sắp diễn ra hôm nay.',
+    alternates: { canonical: `${baseUrl}/livescore` },
   }
 }
 

@@ -15,7 +15,7 @@ import { getLeagueContent } from '@/lib/services/content'
 import { leagueJsonLd, breadcrumbJsonLd } from '@/lib/json-ld'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn'
 
 export async function generateMetadata(props: PageProps<'/giai-dau/[id]'>): Promise<Metadata> {
   const { id } = await props.params
@@ -27,7 +27,7 @@ export async function generateMetadata(props: PageProps<'/giai-dau/[id]'>): Prom
   
   const baseUrl = process.env.NODE_ENV === 'development' 
     ? 'http://localhost:3000' 
-    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')
 
   return {
     title: leagueContent?.title || `${league.league.name} - Bảng xếp hạng & Lịch thi đấu`,

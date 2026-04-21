@@ -21,6 +21,9 @@ import { getPageContent, getCurrentPageContent } from '@/lib/services/content'
 export const dynamic = 'force-dynamic'
 export async function generateMetadata(props: PageProps<'/ty-le-keo'>): Promise<Metadata> {
   const searchParams = await props.searchParams ?? {}
+  const baseUrl = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')
   
   // Lấy nội dung trang - ưu tiên content có query params, fallback về trang chính
   const pageContentWithParams = await getCurrentPageContent('/ty-le-keo', searchParams)
@@ -30,6 +33,7 @@ export async function generateMetadata(props: PageProps<'/ty-le-keo'>): Promise<
   return {
     title: pageContent?.title || 'Tỷ lệ kèo bóng đá',
     description: pageContent?.excerpt || 'Tỷ lệ kèo bóng đá cập nhật từ Bet365 - kèo 1x2, châu Á, tài xỉu các giải hàng đầu.',
+    alternates: { canonical: `${baseUrl}/ty-le-keo` },
   }
 }
 

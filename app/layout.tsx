@@ -44,9 +44,6 @@ export const metadata: Metadata = {
     title: 'BongDaWap',
     description: 'BongDaWap - Xem bóng đá trực tiếp 24/7 - Livescore, kết quả, BXH và nhận định.',
   },
-  alternates: {
-    canonical: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : BASE_URL,
-  },
   robots: {
     index: true,
     follow: true,

@@ -13,7 +13,7 @@ import PageContentSection from '@/components/ui/PageContent'
 import { getTeamContent } from '@/lib/services/content'
 import { teamJsonLd, breadcrumbJsonLd } from '@/lib/json-ld'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn'
 
 export async function generateMetadata(props: PageProps<'/doi-bong/[id]'>): Promise<Metadata> {
   const { id } = await props.params
@@ -25,7 +25,7 @@ export async function generateMetadata(props: PageProps<'/doi-bong/[id]'>): Prom
   
   const baseUrl = process.env.NODE_ENV === 'development' 
     ? 'http://localhost:3000' 
-    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')
 
   return {
     title: teamContent?.title || `${team.team.name} - Thông tin & Lịch thi đấu`,

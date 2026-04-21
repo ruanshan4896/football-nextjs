@@ -13,7 +13,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb'
 import { formatMatchDateTime, formatArticleDate } from '@/lib/date'
 import type { FixtureDetail, FixtureEvent } from '@/lib/api-football'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn'
 
 export async function generateMetadata(props: PageProps<'/tran-dau/[id]'>): Promise<Metadata> {
   const { id } = await props.params
@@ -25,7 +25,7 @@ export async function generateMetadata(props: PageProps<'/tran-dau/[id]'>): Prom
   
   const baseUrl = process.env.NODE_ENV === 'development' 
     ? 'http://localhost:3000' 
-    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')
 
   return {
     title,

@@ -13,7 +13,7 @@ import FixtureList from '@/components/ui/FixtureList'
 
 const BASE_URL = process.env.NODE_ENV === 'development' 
   ? 'http://localhost:3000' 
-  : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+  : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')
 
 export async function generateMetadata(props: { params: Promise<{ group: string }> }): Promise<Metadata> {
   const { group } = await props.params

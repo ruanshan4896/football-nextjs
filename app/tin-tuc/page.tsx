@@ -8,6 +8,9 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: 'Tin tức bóng đá',
   description: 'Tin tức bóng đá mới nhất, cập nhật nhanh nhất từ các giải đấu hàng đầu thế giới.',
+  alternates: {
+    canonical: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')}/tin-tuc`,
+  },
 }
 
 export default async function TinTucPage() {

@@ -11,6 +11,9 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: 'Nhận định & Dự đoán bóng đá',
   description: 'Nhận định, phân tích chuyên sâu và dự đoán kết quả các trận đấu bóng đá.',
+  alternates: {
+    canonical: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')}/nhan-dinh`,
+  },
 }
 
 // Logo giải đấu để hiển thị trong filter

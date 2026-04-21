@@ -4,6 +4,9 @@ import { getPageContentByPath } from '@/lib/services/content'
 export const metadata: Metadata = {
   title: 'Điều khoản dịch vụ',
   description: 'Điều khoản dịch vụ của BongDaWap - Các quy định và điều kiện sử dụng trang web.',
+  alternates: {
+    canonical: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')}/dieu-khoan`,
+  },
 }
 
 export default async function DieuKhoanPage() {

@@ -11,6 +11,9 @@ import { getPageContent, getCurrentPageContent } from '@/lib/services/content'
 export const dynamic = 'force-dynamic'
 export async function generateMetadata(props: PageProps<'/bang-xep-hang'>): Promise<Metadata> {
   const searchParams = await props.searchParams ?? {}
+  const baseUrl = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')
   
   // Lấy nội dung trang - ưu tiên content có query params, fallback về trang chính
   const pageContentWithParams = await getCurrentPageContent('/bang-xep-hang', searchParams)
@@ -20,6 +23,7 @@ export async function generateMetadata(props: PageProps<'/bang-xep-hang'>): Prom
   return {
     title: pageContent?.title || 'Bảng xếp hạng bóng đá',
     description: pageContent?.excerpt || 'Bảng xếp hạng các giải đấu bóng đá hàng đầu thế giới cập nhật mới nhất.',
+    alternates: { canonical: `${baseUrl}/bang-xep-hang` },
   }
 }
 

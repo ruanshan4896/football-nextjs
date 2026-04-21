@@ -22,7 +22,7 @@ export async function generateMetadata(props: PageProps<'/tin-tuc/[slug]'>): Pro
 
   const baseUrl = process.env.NODE_ENV === 'development'
     ? 'http://localhost:3000'
-    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+    : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')
 
   return {
     title: article.title,

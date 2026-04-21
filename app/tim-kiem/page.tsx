@@ -11,7 +11,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb'
 export const dynamic = 'force-dynamic'
 const BASE_URL = process.env.NODE_ENV === 'development' 
   ? 'http://localhost:3000' 
-  : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bongdalive.com')
+  : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')
 
 export const metadata: Metadata = {
   title: 'Tìm kiếm - Giải đấu, Đội bóng, Bài viết',

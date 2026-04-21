@@ -4,6 +4,9 @@ import { getPageContentByPath } from '@/lib/services/content'
 export const metadata: Metadata = {
   title: 'Chính sách quyền riêng tư',
   description: 'Chính sách quyền riêng tư của BongDaWap - Cách chúng tôi thu thập và bảo vệ thông tin của bạn.',
+  alternates: {
+    canonical: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn')}/chinh-sach-rieng-tu`,
+  },
 }
 
 export default async function ChinhSachRiengTuPage() {
