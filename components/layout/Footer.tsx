@@ -19,7 +19,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm leading-relaxed">
-              BongDaWap là trang thông tin bóng đá trực tiếp dành cho người hâm mộ Việt Nam.
+              <a href="https://www.techshift.vn/">Bongdawap</a> là trang thông tin bóng đá trực tiếp dành cho người hâm mộ Việt Nam.
               Cập nhật livescore, kết quả, bảng xếp hạng, tỷ lệ kèo và nhận định chuyên sâu 24/7
               từ các giải đấu hàng đầu thế giới.
             </p>
@@ -97,7 +97,7 @@ export default function Footer() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-500 mt-0.5">📝</span>
-                  <span>Nhận định & tin tức do đội ngũ biên tập BongDaWap thực hiện.</span>
+                  <span>Nhận định & tin tức do đội ngũ biên tập Bongdawap thực hiện.</span>
                 </li>
               </ul>
             </div>
@@ -111,12 +111,12 @@ export default function Footer() {
               </h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/dieu-khoan" className="hover:text-green-400 transition-colors">
+                  <Link href="/dieu-khoan" className="hover:text-green-400 transition-colors" rel="nofollow">
                     Điều khoản dịch vụ
                   </Link>
                 </li>
                 <li>
-                  <Link href="/chinh-sach-rieng-tu" className="hover:text-green-400 transition-colors">
+                  <Link href="/chinh-sach-rieng-tu" className="hover:text-green-400 transition-colors" rel="nofollow">
                     Chính sách riêng tư
                   </Link>
                 </li>
@@ -126,7 +126,7 @@ export default function Footer() {
             <div className="rounded-lg bg-gray-800 p-4 text-xs leading-relaxed space-y-2">
               <p className="font-semibold text-white text-sm">⚠ Tuyên bố miễn trừ trách nhiệm</p>
               <p>
-                BongDaWap chỉ cung cấp thông tin thể thao mang tính tham khảo.
+                Bongdawap chỉ cung cấp thông tin thể thao mang tính tham khảo.
                 Chúng tôi không tổ chức, khuyến khích hay tham gia vào bất kỳ
                 hoạt động cá cược nào.
               </p>
@@ -143,7 +143,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-gray-800">
         <div className="mx-auto max-w-screen-xl px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} BongDaWap. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} https://www.techshift.vn/. All rights reserved.</p>
           <p>Dữ liệu bóng đá được cung cấp bởi <span className="text-gray-400">API-Football</span>.</p>
         </div>
       </div>
