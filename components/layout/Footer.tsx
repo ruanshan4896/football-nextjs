@@ -1,39 +1,156 @@
 import Link from 'next/link'
+import Image from 'next/image'
+import { Facebook, Youtube, Twitter } from 'lucide-react'
+
+const HOT_LEAGUES = [
+  { id: 39,  name: 'Premier League',   href: '/giai-dau/39' },
+  { id: 140, name: 'La Liga',          href: '/giai-dau/140' },
+  { id: 135, name: 'Serie A',          href: '/giai-dau/135' },
+  { id: 78,  name: 'Bundesliga',       href: '/giai-dau/78' },
+  { id: 61,  name: 'Ligue 1',          href: '/giai-dau/61' },
+  { id: 2,   name: 'Champions League', href: '/giai-dau/2' },
+  { id: 3,   name: 'Europa League',    href: '/giai-dau/3' },
+  { id: 1,   name: 'World Cup 2026',   href: '/world-cup-2026' },
+  { id: 340, name: 'V.League 1',       href: '/giai-dau/340' },
+]
+
+const NAV_LINKS = [
+  { label: 'Trang chủ',     href: '/' },
+  { label: 'Livescore',     href: '/livescore' },
+  { label: 'Lịch thi đấu', href: '/lich-thi-dau' },
+  { label: 'Bảng xếp hạng',href: '/bang-xep-hang' },
+  { label: 'Nhận định',    href: '/nhan-dinh' },
+  { label: 'Tin tức',      href: '/tin-tuc' },
+  { label: 'Tỷ lệ kèo',   href: '/ty-le-keo' },
+  { label: 'Tìm kiếm',    href: '/tim-kiem' },
+]
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-800 text-gray-300 mt-8">
-      <div className="mx-auto max-w-screen-xl px-4 py-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Brand */}
-          <div className="text-center md:text-left">
-            <p className="text-sm font-semibold text-white">BongDaWap</p>
-            <p className="text-xs text-gray-400 mt-0.5">Xem bóng đá trực tiếp, livescore 24/7</p>
+    <footer className="bg-gray-900 text-gray-400 mt-8">
+      {/* Main footer content */}
+      <div className="mx-auto max-w-screen-xl px-4 py-10">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+
+          {/* Col 1 – Brand & description */}
+          <div className="space-y-4">
+            <Link href="/" className="inline-block">
+              <Image
+                src="/bongdawap-logo-techshift.png"
+                alt="BongDaWap"
+                width={140}
+                height={36}
+                className="h-9 w-auto object-contain brightness-0 invert"
+              />
+            </Link>
+            <p className="text-sm leading-relaxed">
+              Trang xem bóng đá trực tiếp, livescore, kết quả, bảng xếp hạng,
+              tỷ lệ kèo và nhận định chuyên sâu 24/7.
+            </p>
+            {/* Social links */}
+            <div className="flex items-center gap-3 pt-1">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="rounded-full bg-gray-700 p-2 hover:bg-green-700 transition-colors"
+              >
+                <Facebook size={16} />
+              </a>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube"
+                className="rounded-full bg-gray-700 p-2 hover:bg-green-700 transition-colors"
+              >
+                <Youtube size={16} />
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter / X"
+                className="rounded-full bg-gray-700 p-2 hover:bg-green-700 transition-colors"
+              >
+                <Twitter size={16} />
+              </a>
+            </div>
           </div>
 
-          {/* Links */}
-          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs">
-            <Link href="/" className="hover:text-white transition-colors">Trang chủ</Link>
-            <Link href="/livescore" className="hover:text-white transition-colors">Livescore</Link>
-            <Link href="/nhan-dinh" className="hover:text-white transition-colors">Nhận định</Link>
-            <Link href="/tin-tuc" className="hover:text-white transition-colors">Tin tức</Link>
-            <Link href="/ty-le-keo" className="hover:text-white transition-colors">Tỷ lệ kèo</Link>
-          </nav>
+          {/* Col 2 – Navigation */}
+          <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white">
+              Điều hướng
+            </h3>
+            <ul className="space-y-2">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm hover:text-green-400 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          {/* Legal */}
-          <nav className="flex items-center gap-4 text-xs">
-            <Link href="/dieu-khoan" className="hover:text-white transition-colors">
-              Điều khoản dịch vụ
-            </Link>
-            <span className="text-gray-600">·</span>
-            <Link href="/chinh-sach-rieng-tu" className="hover:text-white transition-colors">
-              Chính sách riêng tư
-            </Link>
-          </nav>
+          {/* Col 3 – Hot leagues */}
+          <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white">
+              Giải đấu nổi bật
+            </h3>
+            <ul className="space-y-2">
+              {HOT_LEAGUES.map((league) => (
+                <li key={league.id}>
+                  <Link
+                    href={league.href}
+                    className="text-sm hover:text-green-400 transition-colors"
+                  >
+                    {league.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Col 4 – About & legal */}
+          <div>
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white">
+              Thông tin
+            </h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/dieu-khoan" className="text-sm hover:text-green-400 transition-colors">
+                  Điều khoản dịch vụ
+                </Link>
+              </li>
+              <li>
+                <Link href="/chinh-sach-rieng-tu" className="text-sm hover:text-green-400 transition-colors">
+                  Chính sách riêng tư
+                </Link>
+              </li>
+            </ul>
+
+            <div className="mt-6 rounded-lg bg-gray-800 p-4 text-xs leading-relaxed">
+              <p className="font-medium text-white mb-1">Tuyên bố miễn trừ</p>
+              <p>
+                BongDaWap chỉ cung cấp thông tin thể thao. Chúng tôi không tổ
+                chức cá cược hay các hoạt động vi phạm pháp luật.
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div className="mt-4 border-t border-gray-700 pt-4 text-center text-xs text-gray-500">
-          © {new Date().getFullYear()} BongDaWap. Dữ liệu bóng đá được cung cấp bởi API-Football.
+      {/* Bottom bar */}
+      <div className="border-t border-gray-800">
+        <div className="mx-auto max-w-screen-xl px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
+          <p>© {new Date().getFullYear()} BongDaWap. All rights reserved.</p>
+          <p>Dữ liệu bóng đá được cung cấp bởi <span className="text-gray-400">API-Football</span>.</p>
         </div>
       </div>
     </footer>
