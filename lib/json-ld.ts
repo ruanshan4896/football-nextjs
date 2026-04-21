@@ -48,6 +48,7 @@ export function articleJsonLd(article: {
     author: {
       '@type': 'Person',
       name: article.author,
+      url: `${BASE_URL}/nhan-dinh?author=${encodeURIComponent(article.author)}`,
     },
     publisher: {
       '@type': 'Organization',
