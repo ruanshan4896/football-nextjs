@@ -21,13 +21,32 @@ export async function getOddsByLeague(
 
   return unstable_cache(
     async () => {
-      const result = await fetchOddsByLeague(leagueId, resolvedSeason, page, bookmakerId)
-      const { fetchFixtureById } = await import('@/lib/api-football')
-      const fixtures = await Promise.all(result.odds.map(o => fetchFixtureById(o.fixture.id)))
-      const upcomingOdds = result.odds.filter((_, i) => fixtures[i]?.fixture.status.short === 'NS')
-      return { odds: upcomingOdds, totalPages: result.totalPages }
+      // Fetch page đầu tiên để biết tổng số pages
+      const firstResult = await fetchOddsByLeague(leagueId, resolvedSeason, 1, bookmakerId)
+      const totalPages = firstResult.totalPages
+
+      // Fetch thêm các page tiếp theo nếu có (tối đa 5 page)
+      const pagesToFetch = Math.min(totalPages, 5)
+      const additionalPages = pagesToFetch > 1
+        ? await Promise.all(
+            Array.from({ length: pagesToFetch - 1 }, (_, i) =>
+              fetchOddsByLeague(leagueId, resolvedSeason, i + 2, bookmakerId)
+            )
+          )
+        : []
+
+      const allOdds = [
+        ...firstResult.odds,
+        ...additionalPages.flatMap(r => r.odds),
+      ]
+
+      // Lọc trận sắp diễn ra dựa vào timestamp — không cần gọi thêm API
+      const nowTs = Math.floor(Date.now() / 1000)
+      const upcomingOdds = allOdds.filter(o => o.fixture.timestamp > nowTs)
+
+      return { odds: upcomingOdds, totalPages }
     },
-    [`odds_league_${leagueId}_${resolvedSeason}_p${page}_bm${bookmakerId}`],
+    [`odds_league_${leagueId}_${resolvedSeason}_bm${bookmakerId}`],
     { revalidate: 900 } // 15 phút
   )()
 }
