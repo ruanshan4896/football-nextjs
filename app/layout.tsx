@@ -65,6 +65,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" className="h-full">
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1495841003681168"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className="min-h-full bg-gray-100 antialiased">
         {/* Google News / Subscribe with Google */}
         <Script
@@ -81,8 +89,6 @@ export default function RootLayout({
             });
           });
         `}</Script>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1495841003681168"
-     crossorigin="anonymous"></script>
         <ThemeProvider>
           {/* Header - sticky top */}
           <Header />
