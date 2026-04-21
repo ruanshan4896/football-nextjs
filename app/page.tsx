@@ -15,7 +15,6 @@ import {
   Globe,
 } from 'lucide-react'
 import { getLiveMatches } from '@/lib/services/live'
-import { getOddsByLeague } from '@/lib/services/odds'
 import { supabase } from '@/lib/supabase'
 import { supabaseAdmin } from '@/lib/supabase-server'
 import { websiteJsonLd, organizationJsonLd } from '@/lib/json-ld'
@@ -181,54 +180,6 @@ async function FeaturedArticles() {
   )
 }
 
-// Hot Odds Preview
-async function HotOddsPreview() {
-  try {
-    const { odds } = await getOddsByLeague(39, undefined, 1, 8)
-    const hotOdds = odds.slice(0, 3)
-
-    return (
-      <div className="rounded-xl bg-white shadow-sm border border-gray-100 overflow-hidden">
-        <div className="flex items-center justify-between bg-orange-600 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <TrendingUp size={16} className="text-white" />
-            <h3 className="font-semibold text-white">Kèo hot Premier League</h3>
-          </div>
-          <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">Xem tất cả →</Link>
-        </div>
-        {hotOdds.length > 0 ? (
-          <div className="p-4 space-y-3">
-            {hotOdds.map((odd, i) => (
-              <div key={odd.fixture.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">Trận #{i + 1}</p>
-                  <p className="text-xs text-gray-500">{new Date(odd.fixture.date).toLocaleDateString('vi-VN')}</p>
-                </div>
-                <Link href={`/tran-dau/${odd.fixture.id}`} className="text-xs text-orange-600 hover:underline">Xem kèo →</Link>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="px-4 py-8 text-center text-sm text-gray-400">Đang cập nhật kèo...</div>
-        )}
-      </div>
-    )
-  } catch {
-    return (
-      <div className="rounded-xl bg-white shadow-sm border border-gray-100 overflow-hidden">
-        <div className="flex items-center justify-between bg-orange-600 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <TrendingUp size={16} className="text-white" />
-            <h3 className="font-semibold text-white">Kèo hot</h3>
-          </div>
-          <Link href="/ty-le-keo" className="text-xs text-orange-100 hover:text-white">Xem tất cả →</Link>
-        </div>
-        <div className="px-4 py-8 text-center text-sm text-gray-400">Đang cập nhật...</div>
-      </div>
-    )
-  }
-}
-
 // News Section
 async function NewsSection() {
   const { data: news } = await supabaseAdmin
@@ -317,11 +268,6 @@ export default function HomePage() {
         </Suspense>
       </div>
 
-      <Suspense fallback={<ContentSkeleton />}>
-        <HotOddsPreview />
-      </Suspense>
-
-      {/* Tin tức carousel */}
       <Suspense fallback={<ContentSkeleton />}>
         <NewsSection />
       </Suspense>
