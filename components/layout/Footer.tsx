@@ -133,12 +133,12 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/dieu-khoan" className="text-sm hover:text-green-400 transition-colors">
+                <Link href="/dieu-khoan" className="text-sm hover:text-green-400 transition-colors" rel="nofollow">
                   Điều khoản dịch vụ
                 </Link>
               </li>
               <li>
-                <Link href="/chinh-sach-rieng-tu" className="text-sm hover:text-green-400 transition-colors">
+                <Link href="/chinh-sach-rieng-tu" className="text-sm hover:text-green-400 transition-colors" rel="nofollow">
                   Chính sách riêng tư
                 </Link>
               </li>
