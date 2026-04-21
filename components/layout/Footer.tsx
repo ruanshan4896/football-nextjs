@@ -37,9 +37,9 @@ export default function Footer() {
               <Image
                 src="/bongdawap-logo-techshift.png"
                 alt="BongDaWap"
-                width={140}
-                height={36}
-                className="h-9 w-auto object-contain brightness-0 invert"
+                width={200}
+                height={52}
+                className="h-13 w-auto object-contain"
               />
             </Link>
             <p className="text-sm leading-relaxed">
