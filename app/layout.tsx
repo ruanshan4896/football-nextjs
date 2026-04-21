@@ -81,6 +81,8 @@ export default function RootLayout({
             });
           });
         `}</Script>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1495841003681168"
+     crossorigin="anonymous"></script>
         <ThemeProvider>
           {/* Header - sticky top */}
           <Header />
