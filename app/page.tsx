@@ -79,6 +79,20 @@ function HeroSection() {
           </div>
         </div>
       </div>
+
+      {/* Ảnh trang trí phía dưới */}
+      <div className="relative w-full overflow-hidden" style={{ height: '180px' }}>
+        <Image
+          src="/hero-bg.png"
+          alt=""
+          fill
+          className="object-cover object-top opacity-60"
+          sizes="100vw"
+          aria-hidden="true"
+        />
+        {/* Gradient mờ dần từ trên xuống để blend với nền xanh */}
+        <div className="absolute inset-0 bg-gradient-to-b from-green-700/80 to-transparent" />
+      </div>
     </div>
   )
 }
