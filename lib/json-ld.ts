@@ -54,7 +54,9 @@ export function articleJsonLd(article: {
       name: 'BongDaWap',
       logo: {
         '@type': 'ImageObject',
-        url: `${BASE_URL}/icon.svg`,
+        url: `${BASE_URL}/bongdawap-logo-techshift.png`,
+        width: 400,
+        height: 100,
       },
     },
     datePublished: article.published_at,
@@ -99,7 +101,7 @@ export function organizationJsonLd() {
     '@type': 'Organization',
     name: 'BongDaWap',
     url: BASE_URL,
-    logo: `${BASE_URL}/icon.svg`,
+    logo: `${BASE_URL}/bongdawap-logo-techshift.png`,
     description: 'BongDaWap - Trang xem bóng đá trực tiếp, livescore, kết quả, bảng xếp hạng và nhận định chuyên sâu',
     sameAs: [],
     contactPoint: {
