@@ -65,15 +65,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" className="h-full">
-      <head>
+      <body className="min-h-full bg-gray-100 antialiased">
+        {/* Google AdSense */}
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1495841003681168"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
-      </head>
-      <body className="min-h-full bg-gray-100 antialiased">
         {/* Google News / Subscribe with Google */}
         <Script
           src="https://news.google.com/swg/js/v1/swg-basic.js"
