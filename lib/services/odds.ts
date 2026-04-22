@@ -1,7 +1,14 @@
 import 'server-only'
 import { unstable_cache } from 'next/cache'
-import { fetchOddsByLeague, fetchOddsByFixture, fetchBookmakers, type FixtureOdds, type OddsValue, type Bookmaker } from '@/lib/api-football'
+import { fetchOddsByLeague, fetchOddsByFixture, fetchBookmakers, fetchFixturesByDate, type FixtureOdds, type OddsValue, type Bookmaker } from '@/lib/api-football'
 import { TRACKED_LEAGUES, CURRENT_SEASON } from './standings'
+
+export type FixtureOddsWithTeams = FixtureOdds & {
+  teams: {
+    home: { id: number; name: string; logo: string }
+    away: { id: number; name: string; logo: string }
+  }
+}
 
 export async function getBookmakers(): Promise<Bookmaker[]> {
   return unstable_cache(
@@ -16,7 +23,7 @@ export async function getOddsByLeague(
   season?: number,
   page = 1,
   bookmakerId = 8
-): Promise<{ odds: FixtureOdds[]; totalPages: number }> {
+): Promise<{ odds: FixtureOddsWithTeams[]; totalPages: number }> {
   const resolvedSeason = season ?? TRACKED_LEAGUES.find(l => l.id === leagueId)?.season ?? CURRENT_SEASON
 
   return unstable_cache(
@@ -40,11 +47,42 @@ export async function getOddsByLeague(
         ...additionalPages.flatMap(r => r.odds),
       ]
 
-      // Lọc trận sắp diễn ra dựa vào timestamp — không cần gọi thêm API
+      // Lọc trận sắp diễn ra dựa vào timestamp
       const nowTs = Math.floor(Date.now() / 1000)
       const upcomingOdds = allOdds.filter(o => o.fixture.timestamp > nowTs)
 
-      return { odds: upcomingOdds, totalPages }
+      if (upcomingOdds.length === 0) {
+        return { odds: [], totalPages }
+      }
+
+      // Lấy các ngày duy nhất từ odds để fetch fixtures theo date (1 call/ngày thay vì N calls)
+      const uniqueDates = [...new Set(
+        upcomingOdds.map(o => o.fixture.date.split('T')[0])
+      )]
+
+      const fixturesByDateArr = await Promise.all(
+        uniqueDates.map(date => fetchFixturesByDate(date))
+      )
+
+      // Build map fixtureId -> team info
+      const teamMap = new Map<number, { home: { id: number; name: string; logo: string }; away: { id: number; name: string; logo: string } }>()
+      fixturesByDateArr.flat().forEach(f => {
+        teamMap.set(f.fixture.id, {
+          home: { id: f.teams.home.id, name: f.teams.home.name, logo: f.teams.home.logo },
+          away: { id: f.teams.away.id, name: f.teams.away.name, logo: f.teams.away.logo },
+        })
+      })
+
+      // Merge team info vào odds — bỏ qua trận không tìm được team info
+      const oddsWithTeams: FixtureOddsWithTeams[] = upcomingOdds
+        .map(o => {
+          const teams = teamMap.get(o.fixture.id)
+          if (!teams) return null
+          return { ...o, teams }
+        })
+        .filter((o): o is FixtureOddsWithTeams => o !== null)
+
+      return { odds: oddsWithTeams, totalPages }
     },
     [`odds_league_${leagueId}_${resolvedSeason}_bm${bookmakerId}`],
     { revalidate: 900 } // 15 phút

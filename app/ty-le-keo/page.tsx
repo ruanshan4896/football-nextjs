@@ -9,9 +9,9 @@ import {
   getMatchWinner, getOverUnder, getAsianHandicap,
   getFirstHalfWinner, getFirstHalfOverUnder, getFirstHalfAsianHandicap,
   getCorrectScore,
+  type FixtureOddsWithTeams,
 } from '@/lib/services/odds'
 import { TRACKED_LEAGUES } from '@/lib/services/standings'
-import type { FixtureOdds } from '@/lib/api-football'
 import { BookmakerSelect } from './BookmakerSelect'
 import { OddsMatchRow } from './OddsMatchRow'
 import PageContentSection from '@/components/ui/PageContent'
@@ -59,24 +59,8 @@ async function OddsSection({ leagueId, bookmakerId }: { leagueId: number; bookma
     )
   }
 
-  // Fetch tất cả fixtures để lấy tên đội và logo
-  const { fetchFixtureById } = await import('@/lib/api-football')
-  const fixtureIds = odds.map(o => o.fixture.id)
-  const fixtures = await Promise.all(fixtureIds.map(id => fetchFixtureById(id)))
-  
-  // Map fixture ID -> team info
-  const fixtureTeams = new Map<number, { home: { name: string; logo: string }; away: { name: string; logo: string } }>()
-  fixtures.forEach(f => {
-    if (f) {
-      fixtureTeams.set(f.fixture.id, {
-        home: { name: f.teams.home.name, logo: f.teams.home.logo },
-        away: { name: f.teams.away.name, logo: f.teams.away.logo }
-      })
-    }
-  })
-
   // Nhóm theo league
-  const grouped = odds.reduce<Record<number, FixtureOdds[]>>((acc, o) => {
+  const grouped = odds.reduce<Record<number, FixtureOddsWithTeams[]>>((acc, o) => {
     const lid = o.league.id
     if (!acc[lid]) acc[lid] = []
     acc[lid].push(o)
@@ -103,7 +87,8 @@ async function OddsSection({ leagueId, bookmakerId }: { leagueId: number; bookma
             {/* Rows */}
             <div>
               {group.map((o) => {
-                const teams = fixtureTeams.get(o.fixture.id)
+                // Team info đã có sẵn trong odds object
+                const { teams } = o
                 
                 // Chuẩn bị data cho client component
                 const winner = getMatchWinner(o)
@@ -148,10 +133,10 @@ async function OddsSection({ leagueId, bookmakerId }: { leagueId: number; bookma
                     data={{
                       fixtureId: o.fixture.id,
                       fixtureDate: o.fixture.date,
-                      homeTeam: teams?.home.name ?? 'Đội nhà',
-                      awayTeam: teams?.away.name ?? 'Đội khách',
-                      homeLogo: teams?.home.logo ?? '',
-                      awayLogo: teams?.away.logo ?? '',
+                      homeTeam: teams.home.name,
+                      awayTeam: teams.away.name,
+                      homeLogo: teams.home.logo,
+                      awayLogo: teams.away.logo,
                       handicapValues,
                       ouValues,
                       winnerValues,
