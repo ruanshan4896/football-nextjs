@@ -103,47 +103,8 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Col 3 – Hệ thống site & Pháp lý */}
+          {/* Col 3 – Pháp lý */}
           <div className="space-y-6">
-            {/* Hệ thống site */}
-            <div>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[#101828]">
-                Hệ thống site
-              </h3>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a
-                    href="https://gk88.vegas/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#101828] hover:text-[#101828] transition-colors"
-                  >
-                    gk88
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://18win.wtf/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#101828] hover:text-[#101828] transition-colors"
-                  >
-                    18win
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://uk88online.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#101828] hover:text-[#101828] transition-colors"
-                  >
-                    uk88
-                  </a>
-                </li>
-              </ul>
-            </div>
-
             {/* Pháp lý */}
             <div>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
@@ -185,6 +146,44 @@ export default function Footer() {
         <div className="mx-auto max-w-screen-xl px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
           <p>© {new Date().getFullYear()} https://www.techshift.vn/. All rights reserved.</p>
           <p>Dữ liệu bóng đá được cung cấp bởi <span className="text-gray-400">API-Football</span>.</p>
+        </div>
+      </div>
+
+      {/* Hệ thống site */}
+      <div className="border-t border-gray-800">
+        <div className="mx-auto max-w-screen-xl px-4 py-4">
+          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            <li>
+              <a
+                href="https://gk88.vegas/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#101828] hover:text-[#101828] transition-colors"
+              >
+                gk88
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://18win.wtf/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#101828] hover:text-[#101828] transition-colors"
+              >
+                18win
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://uk88online.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#101828] hover:text-[#101828] transition-colors"
+              >
+                uk88
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>
