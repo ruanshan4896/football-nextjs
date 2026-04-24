@@ -53,6 +53,11 @@ export const metadata: Metadata = {
     icon: '/icon.svg',
     shortcut: '/icon.svg',
   },
+  alternates: {
+    types: {
+      'application/atom+xml': `${BASE_URL}/feed.xml`,
+    },
+  },
 }
 
 export default function RootLayout({
