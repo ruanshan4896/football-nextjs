@@ -107,7 +107,7 @@ export default function Footer() {
           <div className="space-y-6">
             {/* Hệ thống site */}
             <div>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[#101828]">
                 Hệ thống site
               </h3>
               <ul className="space-y-2 text-sm">
