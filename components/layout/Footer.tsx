@@ -103,8 +103,47 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Col 3 – Pháp lý & tuyên bố miễn trừ */}
+          {/* Col 3 – Hệ thống site & Pháp lý */}
           <div className="space-y-6">
+  <div>
+    <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
+      Hệ thống site
+    </h3>
+    <ul className="space-y-2 text-sm">
+      <li>
+        <a 
+          href="https://gk88.vegas/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-[#101828] hover:text-[#101828] transition-colors"
+        >
+          gk88
+        </a>
+      </li>
+      <li>
+        <a 
+          href="https://18win.wtf/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-[#101828] hover:text-[#101828] transition-colors"
+        >
+          18win
+        </a>
+      </li>
+      <li>
+        <a 
+          href="https://uk88online.com/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-[#101828] hover:text-[#101828] transition-colors"
+        >
+          uk88
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
             <div>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
                 Pháp lý
@@ -121,6 +160,7 @@ export default function Footer() {
                   </Link>
                 </li>
               </ul>
+            </div>
             </div>
 
             <div className="rounded-lg bg-gray-800 p-4 text-xs leading-relaxed space-y-2">
