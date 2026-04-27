@@ -132,20 +132,22 @@ export default function Footer() {
               </ul>
             </div>
 
-            <div className="rounded-lg bg-gray-800 p-4 text-xs leading-relaxed space-y-2">
-              <p className="font-semibold text-white text-sm">⚠ Tuyên bố miễn trừ trách nhiệm</p>
-              <p>
-                Bongdawap chỉ cung cấp thông tin thể thao mang tính tham khảo.
-                Chúng tôi không tổ chức, khuyến khích hay tham gia vào bất kỳ
-                hoạt động cá cược nào.
-              </p>
-              <p>
-                Nội dung trên trang không dành cho người dưới 18 tuổi.
-                Hãy chơi thể thao có trách nhiệm.
-              </p>
-            </div>
           </div>
 
+        </div>
+
+        {/* Tuyên bố miễn trừ trách nhiệm – full width */}
+        <div className="mt-8 rounded-lg bg-gray-800 p-4 text-xs leading-relaxed space-y-2">
+          <p className="font-semibold text-white text-sm">⚠ Tuyên bố miễn trừ trách nhiệm</p>
+          <p>
+            Bongdawap chỉ cung cấp thông tin thể thao mang tính tham khảo.
+            Chúng tôi không tổ chức, khuyến khích hay tham gia vào bất kỳ
+            hoạt động cá cược nào.
+          </p>
+          <p>
+            Nội dung trên trang không dành cho người dưới 18 tuổi.
+            Hãy chơi thể thao có trách nhiệm.
+          </p>
         </div>
       </div>
 
