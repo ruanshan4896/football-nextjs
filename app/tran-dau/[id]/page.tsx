@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Clock, Users, TrendingUp } from 'lucide-react'
+import { Clock, Users, TrendingUp, FileText } from 'lucide-react'
 import { getFixtureDetails } from '@/lib/services/fixtures'
 import { getOddsByFixture, getMatchWinner, getOverUnder, getAsianHandicap } from '@/lib/services/odds'
 import { supabase } from '@/lib/supabase'
@@ -10,6 +10,7 @@ import MatchStatusBadge from '@/components/ui/MatchStatusBadge'
 import { fixtureJsonLd, breadcrumbJsonLd } from '@/lib/json-ld'
 import BackButton from '@/components/ui/BackButton'
 import Breadcrumb from '@/components/ui/Breadcrumb'
+import ArticleCard from '@/components/ui/ArticleCard'
 import { formatMatchDateTime, formatArticleDate } from '@/lib/date'
 import type { FixtureDetail, FixtureEvent } from '@/lib/api-football'
 
@@ -434,7 +435,7 @@ async function OddsSection({ fixtureId }: { fixtureId: number }) {
   )
 }
 
-// --- Bài viết nhận định ---
+// --- Bài viết nhận định gắn trận ---
 async function MatchArticle({ fixtureId }: { fixtureId: number }) {
   const { data: article } = await supabase
     .from('articles')
@@ -461,6 +462,34 @@ async function MatchArticle({ fixtureId }: { fixtureId: number }) {
           className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
+      </div>
+    </div>
+  )
+}
+
+// --- Bài viết liên quan theo giải đấu ---
+async function RelatedArticles({ leagueId, fixtureId }: { leagueId: number; fixtureId: number }) {
+  const { data: articles } = await supabase
+    .from('articles')
+    .select('id, title, slug, excerpt, cover_image, author, published_at, match_id, league_id')
+    .eq('status', 'published')
+    .eq('league_id', leagueId)
+    .neq('match_id', fixtureId)
+    .order('published_at', { ascending: false })
+    .limit(4)
+
+  if (!articles || articles.length === 0) return null
+
+  return (
+    <div className="rounded-xl bg-white shadow-sm overflow-hidden">
+      <div className="flex items-center gap-2 bg-green-700 px-4 py-3">
+        <FileText size={15} className="text-white" />
+        <h2 className="text-sm font-semibold text-white">Nhận định liên quan</h2>
+      </div>
+      <div className="divide-y divide-gray-50">
+        {articles.map((article) => (
+          <ArticleCard key={article.id} article={article} basePath="/nhan-dinh" />
+        ))}
       </div>
     </div>
   )
@@ -543,6 +572,12 @@ export default async function TranDauPage(props: PageProps<'/tran-dau/[id]'>) {
       <Suspense fallback={null}>
         <MatchArticle fixtureId={fixtureId} />
       </Suspense>
+
+      {fixture?.league?.id && (
+        <Suspense fallback={null}>
+          <RelatedArticles leagueId={fixture.league.id} fixtureId={fixtureId} />
+        </Suspense>
+      )}
     </div>
   )
 }

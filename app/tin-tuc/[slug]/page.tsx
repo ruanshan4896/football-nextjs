@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { Clock, User } from 'lucide-react'
+import { Clock, User, Newspaper } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { articleJsonLd } from '@/lib/json-ld'
+import { articleJsonLd, breadcrumbJsonLd } from '@/lib/json-ld'
 import { formatArticleDateTime } from '@/lib/date'
 import BackButton from '@/components/ui/BackButton'
 import Breadcrumb from '@/components/ui/Breadcrumb'
+import ArticleCard from '@/components/ui/ArticleCard'
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn'
 
 export async function generateMetadata(props: PageProps<'/tin-tuc/[slug]'>): Promise<Metadata> {
   const { slug } = await props.params
@@ -49,11 +52,35 @@ export default async function TinTucDetailPage(props: PageProps<'/tin-tuc/[slug]
 
   if (!article) notFound()
 
+  // Lấy bài viết liên quan: cùng league_id (nếu có), loại trừ bài hiện tại
+  let relatedQuery = supabase
+    .from('articles')
+    .select('id, title, slug, excerpt, cover_image, author, published_at, match_id, league_id')
+    .eq('status', 'published')
+    .eq('content_type', 'news')
+    .neq('slug', slug)
+    .order('published_at', { ascending: false })
+    .limit(4)
+
+  if (article.league_id) {
+    relatedQuery = relatedQuery.eq('league_id', article.league_id)
+  }
+
+  const { data: relatedArticles } = await relatedQuery
+
   return (
     <div className="space-y-4">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd(article)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([
+          { name: 'Trang chủ', url: BASE_URL },
+          { name: 'Tin tức', url: `${BASE_URL}/tin-tuc` },
+          { name: article.title, url: `${BASE_URL}/tin-tuc/${article.slug}` },
+        ])) }}
       />
 
       <Breadcrumb
@@ -94,6 +121,21 @@ export default async function TinTucDetailPage(props: PageProps<'/tin-tuc/[slug]
           />
         </div>
       </article>
+
+      {/* Bài viết liên quan */}
+      {relatedArticles && relatedArticles.length > 0 && (
+        <div className="rounded-xl bg-white shadow-sm overflow-hidden">
+          <div className="flex items-center gap-2 bg-blue-700 px-4 py-3">
+            <Newspaper size={15} className="text-white" />
+            <h2 className="text-sm font-semibold text-white">Tin tức liên quan</h2>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {relatedArticles.map((related) => (
+              <ArticleCard key={related.id} article={related} basePath="/tin-tuc" />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

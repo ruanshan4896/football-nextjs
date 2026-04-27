@@ -20,6 +20,33 @@ interface Props {
   basePath?: string // default: '/nhan-dinh'
 }
 
+const LEAGUE_NAMES: Record<number, string> = {
+  39: 'Premier League',
+  140: 'La Liga',
+  135: 'Serie A',
+  78: 'Bundesliga',
+  61: 'Ligue 1',
+  2: 'Champions League',
+  3: 'Europa League',
+  1: 'World Cup 2026',
+  340: 'V.League 1',
+}
+
+function LeagueBadge({ leagueId }: { leagueId: number }) {
+  const name = LEAGUE_NAMES[leagueId]
+  if (!name) return null
+  const href = leagueId === 1 ? '/world-cup-2026' : `/giai-dau/${leagueId}`
+  return (
+    <Link
+      href={href}
+      onClick={(e) => e.stopPropagation()}
+      className="inline-block rounded px-1.5 py-0.5 text-[10px] font-medium bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+    >
+      {name}
+    </Link>
+  )
+}
+
 // Server Component — dùng chung ở trang nhận định, trang giải đấu
 export default function ArticleCard({ article, variant = 'default', basePath = '/nhan-dinh' }: Props) {
   const href = `${basePath}/${article.slug}`
@@ -50,6 +77,12 @@ export default function ArticleCard({ article, variant = 'default', basePath = '
             <span>{formatArticleDate(article.published_at)}</span>
             <span>·</span>
             <span>{article.author}</span>
+            {article.league_id && (
+              <>
+                <span>·</span>
+                <LeagueBadge leagueId={article.league_id} />
+              </>
+            )}
           </div>
         </div>
       </Link>
@@ -89,6 +122,12 @@ export default function ArticleCard({ article, variant = 'default', basePath = '
           <span>·</span>
           <Clock size={10} />
           <span>{formatArticleDate(article.published_at)}</span>
+          {article.league_id && (
+            <>
+              <span>·</span>
+              <LeagueBadge leagueId={article.league_id} />
+            </>
+          )}
         </div>
       </div>
     </Link>

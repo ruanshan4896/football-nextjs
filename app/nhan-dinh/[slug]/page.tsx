@@ -2,14 +2,17 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Clock, User } from 'lucide-react'
+import { Clock, User, TrendingUp } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { getFixtureDetail } from '@/lib/services/fixtures'
 import MatchStatusBadge from '@/components/ui/MatchStatusBadge'
-import { articleJsonLd } from '@/lib/json-ld'
+import { articleJsonLd, breadcrumbJsonLd } from '@/lib/json-ld'
 import { formatArticleDateTime } from '@/lib/date'
 import BackButton from '@/components/ui/BackButton'
 import Breadcrumb from '@/components/ui/Breadcrumb'
+import ArticleCard from '@/components/ui/ArticleCard'
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.techshift.vn'
 
 // Dynamic metadata
 export async function generateMetadata(props: PageProps<'/nhan-dinh/[slug]'>): Promise<Metadata> {
@@ -58,12 +61,37 @@ export default async function NhanDinhDetailPage(props: PageProps<'/nhan-dinh/[s
     ? await getFixtureDetail(article.match_id)
     : null
 
+  // Lấy bài viết liên quan: cùng league_id (nếu có), loại trừ bài hiện tại
+  let relatedQuery = supabase
+    .from('articles')
+    .select('id, title, slug, excerpt, cover_image, author, published_at, match_id, league_id')
+    .eq('status', 'published')
+    .eq('content_type', 'article')
+    .neq('slug', slug)
+    .order('published_at', { ascending: false })
+    .limit(4)
+
+  if (article.league_id) {
+    relatedQuery = relatedQuery.eq('league_id', article.league_id)
+  }
+
+  const { data: relatedArticles } = await relatedQuery
+
   return (
     <div className="space-y-4">
       {/* JSON-LD NewsArticle schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd(article)) }}
+      />
+      {/* JSON-LD Breadcrumb */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([
+          { name: 'Trang chủ', url: BASE_URL },
+          { name: 'Nhận định', url: `${BASE_URL}/nhan-dinh` },
+          { name: article.title, url: `${BASE_URL}/nhan-dinh/${article.slug}` },
+        ])) }}
       />
 
       <Breadcrumb 
@@ -144,6 +172,21 @@ export default async function NhanDinhDetailPage(props: PageProps<'/nhan-dinh/[s
           />
         </div>
       </article>
+
+      {/* Bài viết liên quan */}
+      {relatedArticles && relatedArticles.length > 0 && (
+        <div className="rounded-xl bg-white shadow-sm overflow-hidden">
+          <div className="flex items-center gap-2 bg-green-700 px-4 py-3">
+            <TrendingUp size={15} className="text-white" />
+            <h2 className="text-sm font-semibold text-white">Nhận định liên quan</h2>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {relatedArticles.map((related) => (
+              <ArticleCard key={related.id} article={related} basePath="/nhan-dinh" />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

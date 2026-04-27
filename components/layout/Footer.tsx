@@ -5,10 +5,10 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-400 mt-8">
       <div className="mx-auto max-w-screen-xl px-4 py-10">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
 
-          {/* Col 1 – Brand, mô tả & mạng xã hội */}
-          <div className="space-y-4">
+          {/* Col 1 – Brand, mô tả & mạng xã hội (chiếm 2/5) */}
+          <div className="space-y-4 lg:col-span-2">
             <Link href="/" className="inline-block">
               <Image
                 src="/bongdawap-logo-techshift.png"
@@ -62,11 +62,43 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Col 2 – Liên hệ & nguồn dữ liệu */}
+          {/* Col 2 – Chuyên mục */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
+              Chuyên mục
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="/livescore" className="hover:text-green-400 transition-colors">Livescore</Link></li>
+              <li><Link href="/lich-thi-dau" className="hover:text-green-400 transition-colors">Lịch thi đấu</Link></li>
+              <li><Link href="/bang-xep-hang" className="hover:text-green-400 transition-colors">Bảng xếp hạng</Link></li>
+              <li><Link href="/nhan-dinh" className="hover:text-green-400 transition-colors">Nhận định</Link></li>
+              <li><Link href="/tin-tuc" className="hover:text-green-400 transition-colors">Tin tức</Link></li>
+              <li><Link href="/ty-le-keo" className="hover:text-green-400 transition-colors">Tỷ lệ kèo</Link></li>
+              <li><Link href="/world-cup-2026" className="hover:text-green-400 transition-colors">World Cup 2026</Link></li>
+            </ul>
+          </div>
+
+          {/* Col 3 – Giải đấu hot */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
+              Giải đấu
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="/giai-dau/39" className="hover:text-green-400 transition-colors">Premier League</Link></li>
+              <li><Link href="/giai-dau/140" className="hover:text-green-400 transition-colors">La Liga</Link></li>
+              <li><Link href="/giai-dau/135" className="hover:text-green-400 transition-colors">Serie A</Link></li>
+              <li><Link href="/giai-dau/78" className="hover:text-green-400 transition-colors">Bundesliga</Link></li>
+              <li><Link href="/giai-dau/61" className="hover:text-green-400 transition-colors">Ligue 1</Link></li>
+              <li><Link href="/giai-dau/2" className="hover:text-green-400 transition-colors">Champions League</Link></li>
+              <li><Link href="/giai-dau/340" className="hover:text-green-400 transition-colors">V.League 1</Link></li>
+            </ul>
+          </div>
+
+          {/* Col 4 – Liên hệ & Pháp lý */}
           <div className="space-y-6">
             <div>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
-                Liên hệ & Hợp tác
+                Liên hệ
               </h3>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
@@ -82,30 +114,6 @@ export default function Footer() {
               </ul>
             </div>
 
-            <div>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
-                Nguồn dữ liệu
-              </h3>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500 mt-0.5">⚽</span>
-                  <span>Kết quả, lịch thi đấu, BXH: <span className="text-gray-300">API-Football</span></span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500 mt-0.5">📊</span>
-                  <span>Tỷ lệ kèo cập nhật theo thời gian thực từ các nhà cái uy tín.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500 mt-0.5">📝</span>
-                  <span>Nhận định & tin tức do đội ngũ biên tập Bongdawap thực hiện.</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Col 3 – Pháp lý */}
-          <div className="space-y-6">
-            {/* Pháp lý */}
             <div>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
                 Pháp lý

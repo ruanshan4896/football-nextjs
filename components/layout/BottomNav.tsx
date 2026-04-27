@@ -2,14 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Calendar, BarChart2, Search, Activity } from 'lucide-react'
+import { Home, Calendar, BarChart2, TrendingUp, Newspaper } from 'lucide-react'
 
 const NAV_ITEMS = [
   { href: '/', label: 'Trang chủ', icon: Home },
-  { href: '/livescore', label: 'Live', icon: Activity },
   { href: '/lich-thi-dau', label: 'Lịch', icon: Calendar },
   { href: '/bang-xep-hang', label: 'BXH', icon: BarChart2 },
-  { href: '/tim-kiem', label: 'Tìm kiếm', icon: Search },
+  { href: '/nhan-dinh', label: 'Nhận định', icon: TrendingUp },
+  { href: '/tin-tuc', label: 'Tin tức', icon: Newspaper },
 ]
 
 export default function BottomNav() {

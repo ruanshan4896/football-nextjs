@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/lich-thi-dau`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE_URL}/bang-xep-hang`, lastModified: new Date(), changeFrequency: 'hourly', priority: 0.8 },
     { url: `${BASE_URL}/nhan-dinh`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    { url: `${BASE_URL}/tin-tuc`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: `${BASE_URL}/ty-le-keo`, lastModified: new Date(), changeFrequency: 'always', priority: 0.7 },
     { url: `${BASE_URL}/tim-kiem`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
   ]
@@ -28,6 +29,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const articleRoutes: MetadataRoute.Sitemap = (articles ?? []).map((a) => ({
     url: `${BASE_URL}/nhan-dinh/${a.slug}`,
+    lastModified: new Date(a.updated_at),
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }))
+
+  // Tin tức đã published
+  const { data: newsArticles } = await supabase
+    .from('articles')
+    .select('slug, updated_at')
+    .eq('status', 'published')
+    .eq('content_type', 'news')
+    .order('updated_at', { ascending: false })
+    .limit(500)
+
+  const newsRoutes: MetadataRoute.Sitemap = (newsArticles ?? []).map((a) => ({
+    url: `${BASE_URL}/tin-tuc/${a.slug}`,
     lastModified: new Date(a.updated_at),
     changeFrequency: 'weekly',
     priority: 0.7,
@@ -106,5 +123,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...staticRoutes, ...articleRoutes, ...leagueRoutes, ...worldCupRoutes, ...teamRoutes, ...recentMatches]
+  return [...staticRoutes, ...articleRoutes, ...newsRoutes, ...leagueRoutes, ...worldCupRoutes, ...teamRoutes, ...recentMatches]
 }
