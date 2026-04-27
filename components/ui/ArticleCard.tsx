@@ -39,7 +39,6 @@ function LeagueBadge({ leagueId }: { leagueId: number }) {
   return (
     <Link
       href={href}
-      onClick={(e) => e.stopPropagation()}
       className="inline-block rounded px-1.5 py-0.5 text-[10px] font-medium bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
     >
       {name}
