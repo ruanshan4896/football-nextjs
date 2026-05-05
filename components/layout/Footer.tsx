@@ -193,6 +193,16 @@ export default function Footer() {
                 uk88
               </a>
             </li>
+            <li>
+              <a
+                href="https://bongdawap.it.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#101828] hover:text-[#101828] transition-colors"
+              >
+                bongdawap.it.com
+              </a>
+            </li>
           </ul>
         </div>
       </div>
